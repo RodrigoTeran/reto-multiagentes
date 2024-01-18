@@ -6,11 +6,11 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from Lift import Lift
+from Utils import Axis
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-# vc para el obser.
 FOVY = 30.0
 ZNEAR = 1.0
 ZFAR = 500.0
@@ -41,29 +41,6 @@ def Init():
     glEnable(GL_DEPTH_TEST)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
-
-def Axis():
-    glShadeModel(GL_FLAT)
-    glBegin(GL_LINES)
-
-    # X axis in red
-    glColor3f(1.0, 0.0, 0.0)
-    glVertex3f(-500, 0.0, 0.0)
-    glVertex3f(500, 0.0, 0.0)
-
-    # Y axis in green
-    glColor3f(0.0, 1.0, 0.0)
-    glVertex3f(0.0, 500, 0.0)
-    glVertex3f(0.0, -500, 0.0)
-
-    # Z axis in blue
-    glColor3f(0.0, 0.0, 1.0)
-    glVertex3f(0.0, 0.0, 500)
-    glVertex3f(0.0, 0.0, -500)
-
-    glEnd()
-    glLineWidth(3)
 
 
 def main():
