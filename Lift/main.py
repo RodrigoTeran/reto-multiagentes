@@ -15,9 +15,9 @@ FOVY = 30.0
 ZNEAR = 1.0
 ZFAR = 500.0
 
-EYE_X = 20.0
-EYE_Y = 20.0
-EYE_Z = 20.0
+EYE_X = 5.0
+EYE_Y = 5.0
+EYE_Z = 5.0
 CENTER_X = 0
 CENTER_Y = 0
 CENTER_Z = 0
@@ -40,7 +40,7 @@ def Init():
     glClearColor(0, 0, 0, 0)
     glEnable(GL_DEPTH_TEST)
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
 
 def main():
