@@ -24,3 +24,18 @@ def Axis():
 
     glEnd()
     glLineWidth(3)
+
+
+def draw_cuboid(points: list[list[float]]):
+    squares = [
+        (0, 1, 2, 3),
+        (0, 4, 5, 1),
+        (3, 2, 6, 7),
+        (4, 7, 6, 5),
+        (0, 4, 7, 3),
+        (1, 5, 6, 2),
+    ]
+
+    for square in squares:
+        for i in square:
+            glVertex3fv(points[i])

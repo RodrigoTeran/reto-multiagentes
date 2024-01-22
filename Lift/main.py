@@ -58,6 +58,16 @@ def main():
                         case pygame.K_ESCAPE:
                             done = True
 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            lift.target_direction += 1
+        if keys[pygame.K_RIGHT]:
+            lift.target_direction -= 1
+        if keys[pygame.K_UP]:
+            lift.plate.target_height += 0.001 * 3
+        if keys[pygame.K_DOWN]:
+            lift.plate.target_height -= 0.001 * 3
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         Axis()

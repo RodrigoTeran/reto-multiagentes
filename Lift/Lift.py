@@ -2,47 +2,24 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from Plate import Plate
-
 import numpy as np
+
+from Plate import Plate
+from Utils import draw_cuboid
 
 
 class Lift:
     def __init__(self, position: list[float], direction: float, angular_speed: float):
-        self.points = np.array(
-            [
-                # Rectángulo perfil 1
-                [-0.5, 0, 0.5],
-                [-0.5, 0, -1.5],
-                [-0.5, 0.5, -1.5],
-                [-0.5, 0.5, 0.5],
-                # Rectángulo perfil 2
-                [0.5, 0, 0.5],
-                [0.5, 0.5, 0.5],
-                [0.5, 0.5, -1.5],
-                [0.5, 0, -1.5],
-                # Rectángulo arriba 1
-                [-0.5, 0.5, 0.5],
-                [-0.5, 0.5, -1.5],
-                [0.5, 0.5, -1.5],
-                [0.5, 0.5, 0.5],
-                # Rectángulo abajo 2
-                [-0.5, 0, 0.5],
-                [0.5, 0, 0.5],
-                [0.5, 0, -1.5],
-                [-0.5, 0, -1.5],
-                # Rectángulo en frente 1
-                [0.5, 0, 0.5],
-                [-0.5, 0, 0.5],
-                [-0.5, 0.5, 0.5],
-                [0.5, 0.5, 0.5],
-                # Rectángulo en atrás 2
-                [0.5, 0, -1.5],
-                [0.5, 0.5, -1.5],
-                [-0.5, 0.5, -1.5],
-                [-0.5, 0, -1.5],
-            ]
-        )
+        self.points = [
+            [-0.5, 0, 0.5],
+            [-0.5, 0.5, 0.5],
+            [0.5, 0.5, 0.5],
+            [0.5, 0, 0.5],
+            [-0.5, 0, -1.5],
+            [-0.5, 0.5, -1.5],
+            [0.5, 0.5, -1.5],
+            [0.5, 0, -1.5],
+        ]
         self.columns = [
             [  # poste A
                 # base
@@ -175,7 +152,7 @@ class Lift:
         ]
         self.position = np.array(position)
         self.direction = direction
-        self.new_direction = -90
+        self.target_direction = -90
         self.angular_speed = angular_speed
         self.plate = Plate()
 
@@ -187,8 +164,7 @@ class Lift:
         # Render main body
         glColor3f(1, 1, 1)
         glBegin(GL_QUADS)
-        for point in self.points:
-            glVertex3fv(point)
+        draw_cuboid(self.points)
         glEnd()
 
         # Render pilot seat
@@ -208,12 +184,9 @@ class Lift:
         glPopMatrix()
         self.update()
 
-    def set_direction(self, new_direction: float):
-        self.new_direction = new_direction
-
     def update(self):
-        if self.new_direction < self.direction:
+        if self.target_direction < self.direction:
             self.direction -= 1 * self.angular_speed
 
-        if self.new_direction > self.direction:
+        if self.target_direction > self.direction:
             self.direction += 1 * self.angular_speed
