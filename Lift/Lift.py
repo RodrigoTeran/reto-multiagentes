@@ -2,6 +2,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+from Plate import Plate
+
 import numpy as np
 
 
@@ -173,24 +175,36 @@ class Lift:
         ]
         self.position = np.array(position)
         self.direction = direction
-        self.new_direction = 180
+        self.new_direction = -90
         self.angular_speed = angular_speed
+        self.plate = Plate()
 
     def render(self):
         glPushMatrix()
         glTranslate(*self.position)
         glRotate(self.direction, 0, 1, 0)
+
+        # Render main body
         glColor3f(1, 1, 1)
         glBegin(GL_QUADS)
         for point in self.points:
             glVertex3fv(point)
         glEnd()
+
+        # Render pilot seat
         glColor3f(0.3, 0.3, 0.3)
         glBegin(GL_QUADS)
         for column in self.columns:
             for point in column:
                 glVertex3fv(point)
         glEnd()
+
+        # Render Plate
+        glPushMatrix()
+        glTranslate(0, 0, 0.51)
+        self.plate.render()
+        glPopMatrix()
+
         glPopMatrix()
         self.update()
 
