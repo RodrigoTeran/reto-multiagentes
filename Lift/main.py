@@ -7,6 +7,7 @@ from OpenGL.GLUT import *
 
 from Lift import Lift
 from Utils import Axis
+from Box import Box
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -15,9 +16,9 @@ FOVY = 30.0
 ZNEAR = 1.0
 ZFAR = 500.0
 
-EYE_X = 5.0
-EYE_Y = 5.0
-EYE_Z = 5.0
+EYE_X = 20.0
+EYE_Y = 20.0
+EYE_Z = 20.0
 CENTER_X = 0
 CENTER_Y = 0
 CENTER_Z = 0
@@ -28,7 +29,7 @@ UP_Z = 0
 
 def Init():
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), DOUBLEBUF | OPENGL)
-    pygame.display.set_caption("OpenGL: 3D Pyramid")
+    pygame.display.set_caption("OpenGL: Lift")
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -45,6 +46,9 @@ def Init():
 
 def main():
     lift = Lift([0, 0, 0], 0, 2)
+    boxes = []
+    boxes.append(Box([1, 1, 1]))
+    boxes.append(Box([-2, 1, -2]))
 
     Init()
     done = False
@@ -72,6 +76,8 @@ def main():
 
         Axis()
         lift.render()
+        for box in boxes:
+            box.render()
 
         pygame.display.flip()
         pygame.time.wait(10)
