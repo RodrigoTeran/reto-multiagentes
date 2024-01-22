@@ -40,11 +40,11 @@ def Init():
     glClearColor(0, 0, 0, 0)
     glEnable(GL_DEPTH_TEST)
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
 
 def main():
-    lift = Lift()
+    lift = Lift([0, 0, 0], 0, 2)
 
     Init()
     done = False
@@ -64,7 +64,7 @@ def main():
         lift.render()
 
         pygame.display.flip()
-        pygame.time.wait(100)
+        pygame.time.wait(10)
 
     pygame.quit()
 
