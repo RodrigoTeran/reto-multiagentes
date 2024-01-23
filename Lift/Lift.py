@@ -13,12 +13,10 @@ TOLERANCE = 0.1
 
 
 class Lift:
-    def __init__(self, position: list[float], angular_speed: float):
+    def __init__(self, position: list[float], direction: list[float], speed: float):
         self.roof_color = [0.7, 0.8, 1.0]
         self.body_color = [0.7, 0.9, 0.8]
         self.plate_color = [0.7, 0.7, 0.7]
-
-    def __init__(self, position: list[float], direction: list[float], speed: float):
         self.points = [
             [-0.5, 0, 0.5],
             [-0.5, 0.5, 0.5],
@@ -165,10 +163,8 @@ class Lift:
                 [0.3, 1.0, -0.3],
             ],
         ]
-        self.position = np.array(position)
-        self.target_position = np.array(position)
-        # self.direction = np.array(direction)
-        # self.target_direction = np.array(direction)
+        self.position = np.array(position, float)
+        self.target_position = np.array(position, float)
         self.speed = speed
         self.plate = Plate(self.plate_color)
 
@@ -200,19 +196,18 @@ class Lift:
     ):  # rota progresivamente el vector de dir hasta alcanzar la dir objetivo
         if self.dir_vector != self.dir_target:
             dif = self.vector_angle(self.dir_vector, self.dir_target)
-            print(dif)
             if (
-                abs(dif) < 0.5
-            ):  # si el abs del angulo de dif es menor a 0.5(la rotacion por iteracion) se termina de rotar igualando la dir al target
+                abs(dif) < 2
+            ):  # si el abs del angulo de dif es menor a 2(la rotacion por iteracion) se termina de rotar igualando la dir al target
                 self.dir_vector = self.dir_target
             elif dif < 0:
-                degree = np.radians(0.5)
+                degree = np.radians(2)
                 x = self.dir_vector[0]
                 y = self.dir_vector[2]
                 self.dir_vector[0] = (x * np.cos(degree)) - (y * np.sin(degree))
                 self.dir_vector[2] = (x * np.sin(degree)) + (y * np.cos(degree))
             elif dif > 0:
-                degree = np.radians(0.5)
+                degree = np.radians(2)
                 x = self.dir_vector[0]
                 y = self.dir_vector[2]
                 self.dir_vector[0] = (x * np.cos(degree)) + (y * np.sin(degree))
@@ -225,11 +220,8 @@ class Lift:
         target = target
         target = [target[0] - current[0], 0, target[2] - current[2]]
         target = target / np.linalg.norm(target)
-        print(self.dir_target)
         self.dir_target[0] = target[0]
         self.dir_target[2] = target[2]
-        print(self.dir_vector)
-        print(self.dir_target)
 
     def render(self):
         glPushMatrix()
@@ -273,9 +265,19 @@ class Lift:
     def update(self):
         if self.dir_vector != self.dir_target:
             self.rotate_dir_vector()
+            return
 
         # TODO: En la funcion update, calcular las coordenadas del nuevo centro de la hitbox y actualizar el atributo self.hitbox_center
         # TODO: Esto se hace una vez que se haya implementado el movimiento de los lifts (Movimiento del robot #5)
         # Calculates if distance between target and current is lower than tolerance and moves towards the objective if not.
         if np.linalg.norm(self.target_position - self.position) > TOLERANCE:
-            self.position += self.direction * self.speed
+            self.position += np.array(self.dir_vector, float) * self.speed
+        else:
+            self.target_position[0] = random.randint(-20, 20)
+            self.target_position[2] = random.randint(-20, 20)
+            self.dir_target = [
+                *(
+                    (self.target_position - self.position)
+                    / np.linalg.norm(self.position - self.target_position)
+                )
+            ]

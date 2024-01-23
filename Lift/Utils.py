@@ -39,3 +39,20 @@ def draw_cuboid(points: list[list[float]]):
     for square in squares:
         for i in square:
             glVertex3fv(points[i])
+
+
+def plane(width: float, length: float, height: float, color: list[float]):
+    points = [
+        [-width, height, -length],
+        [-width, height, length],
+        [width, height, length],
+        [width, height, -length],
+    ]
+
+    glPushMatrix()
+    glColor3fv(color)
+    glBegin(GL_QUADS)
+    for point in points:
+        glVertex3fv(point)
+    glEnd()
+    glPopMatrix()
