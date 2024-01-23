@@ -69,7 +69,7 @@ def liftHitBox(lift: Lift, box: Box):
 
 
 def main():
-    lift = Lift([0, 0, 0], 0, 2)
+    lift = Lift([0, 0, 0], 2)
     boxes = []
     boxes.append(Box([4, 1, 2], BOX_COLOR))
     boxes.append(Box([-2, 1, -2], BOX_COLOR))
