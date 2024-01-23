@@ -155,6 +155,11 @@ class Lift:
         self.target_direction = -90
         self.angular_speed = angular_speed
         self.plate = Plate()
+        
+        # Se considera la hitbox como la bottom plate del lift 
+        self.hitbox_center = self.plate.bottom_plate_center
+        self.hitbox_radius = self.plate.bottom_plate_radius  # El radio del hitbox siempre es el mismo, ya que la bottom plate no cambia de tamaño
+        
 
     def render(self):
         glPushMatrix()
@@ -190,3 +195,6 @@ class Lift:
 
         if self.target_direction > self.direction:
             self.direction += 1 * self.angular_speed
+            
+        # TODO: En la funcion update, calcular las coordenadas del nuevo centro de la hitbox y actualizar el atributo self.hitbox_center
+        # TODO: Esto se hace una vez que se haya implementado el movimiento de los lifts (Movimiento del robot #5)
