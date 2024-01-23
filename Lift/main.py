@@ -5,8 +5,10 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+from random import randint
+
 from Lift import Lift
-from Utils import Axis
+from Utils import Axis, plane
 from Box import Box
 from Warehouse import Warehouse
 
@@ -17,9 +19,9 @@ FOVY = 30.0
 ZNEAR = 1.0
 ZFAR = 500.0
 
-EYE_X = 20.0
-EYE_Y = 20.0
-EYE_Z = 20.0
+EYE_X = 50.0
+EYE_Y = 50.0
+EYE_Z = 50.0
 CENTER_X = 0
 CENTER_Y = 0
 CENTER_Z = 0
@@ -28,6 +30,9 @@ UP_Y = 1
 UP_Z = 0
 
 BOX_COLOR = [0.45, 0.35, 0.23]
+
+PLANE_WIDTH = 20
+PLANE_LENGTH = 20
 
 
 def Init():
@@ -76,10 +81,21 @@ def liftHitBox(lift: Lift, box: Box):
 
 
 def main():
-    lift = Lift([0, 0, 0], 2)
+    lifts = []
+    for _ in range(5):
+        lifts.append(Lift([1.0, 0, 2], [0, 0, 0], 0.1))
     boxes = []
-    boxes.append(Box([4, 1, 2], BOX_COLOR))
-    boxes.append(Box([-2, 1, -2], BOX_COLOR))
+    for _ in range(15):
+        boxes.append(
+            Box(
+                [
+                    randint(-PLANE_WIDTH, PLANE_WIDTH),
+                    1,
+                    randint(-PLANE_LENGTH, PLANE_LENGTH),
+                ],
+                BOX_COLOR,
+            )
+        )
     warehouse = Warehouse([0, 0, 0], 2)
 
     Init()
@@ -94,22 +110,12 @@ def main():
                         case pygame.K_ESCAPE:
                             done = True
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            lift.target_direction += 1
-        if keys[pygame.K_RIGHT]:
-            lift.target_direction -= 1
-        if keys[pygame.K_UP]:
-            lift.plate.target_height += 0.001 * 3
-        if keys[pygame.K_DOWN]:
-            lift.plate.target_height -= 0.001 * 3
-        if keys[pygame.K_w]:
-            lift.go_to_point([0,0,1])
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         Axis()
-        lift.render()
+        plane(PLANE_WIDTH, PLANE_LENGTH, 0, [1, 1, 1])
+        for lift in lifts:
+            lift.render()
         for box in boxes:
             box.render()
         warehouse.render()
