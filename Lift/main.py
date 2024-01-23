@@ -10,6 +10,7 @@ from random import randint
 from Lift import Lift
 from Utils import Axis, plane
 from Box import Box
+from Warehouse import Warehouse
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -95,6 +96,7 @@ def main():
                 BOX_COLOR,
             )
         )
+    warehouse = Warehouse([0, 0, 0], 2)
 
     Init()
     done = False
@@ -116,6 +118,7 @@ def main():
             lift.render()
         for box in boxes:
             box.render()
+        warehouse.render()
 
         pygame.display.flip()
         pygame.time.wait(10)
