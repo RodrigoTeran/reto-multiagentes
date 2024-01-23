@@ -172,7 +172,7 @@ class Lift:
         self.dir_vector[0] = random.randint(1,100) / 100 * (-1 + (random.randint(0,1) * 2))     #numero de +-0.01 a +-1.00
         self.dir_vector[2] = np.sqrt(1-(self.dir_vector[0]*self.dir_vector[0]))* (-1 + (random.randint(0,1) * 2))   #+/-z para ser unitario con [0]
         
-        self.dir_target = self.dir_vector   #dir objetivo
+        self.dir_target = self.dir_vector.copy()   #dir objetivo
         
         
         # Se considera la hitbox como la bottom plate del lift 
@@ -207,6 +207,17 @@ class Lift:
                 self.dir_vector[2] = - (x * np.sin(degree)) + (y * np.cos(degree))
         else:
             self.dir_vector = self.dir_vector
+    
+    def go_to_point(self, target):
+        current = self.position
+        target = target
+        target = [target[0] - current[0], 0, target[2] - current[2]]
+        target = target / np.linalg.norm(target)
+        print(self.dir_target)
+        self.dir_target[0] = target[0]
+        self.dir_target[2] = target[2]
+        print(self.dir_vector)
+        print(self.dir_target)
     
     def render(self):
         glPushMatrix()
