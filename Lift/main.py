@@ -42,6 +42,29 @@ def Init():
     glEnable(GL_DEPTH_TEST)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+    
+def liftHitBox(lift: Lift, box: Box):
+    ''' Funcion que checa si el hitbox del lift y el hitbox de la caja se intersectan,
+    mediante el calculo de distancias eucleidianas de los centros de las hitboxes.
+    
+    Si la suma de los radios de las hitboxes es menor a la distancia entre los centros de las hitboxes, 
+    entonces se intersectan.
+    
+        - Box hitbox: Se considera el radio de la caja como la distancia de su centro a uno de sus vertices
+        - Lift hitbox: Se considera a la bottom plate como la hitbox del lift, por lo que su radio es la distancia 
+            de su centro a uno de sus vertices.
+    
+    Esta funcion se debe llamar por cada combinacion de lift y caja, para determinar si se intersectan o no.
+    '''
+    
+    box_center = box.position
+    
+    if ((lift.hitbox_radius + box.radius) < ((lift.hitbox_center[0] - box_center[0]) ** 2 + (lift.hitbox_center[1] - box_center[1]) ** 2 + (lift.hitbox_center[2] - box_center[2]) ** 2) ** 0.5):
+        print(f"El lift {lift} y la caja {box} se intersectan")
+    else:
+        print("Falso")
+        
+    # TODO: Implementar la funcion de carga, traslado y descarga de cajas
 
 
 def main():
@@ -78,7 +101,7 @@ def main():
         lift.render()
         for box in boxes:
             box.render()
-
+    
         pygame.display.flip()
         pygame.time.wait(10)
 
