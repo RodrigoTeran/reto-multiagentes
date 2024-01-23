@@ -26,6 +26,7 @@ UP_X = 0
 UP_Y = 1
 UP_Z = 0
 
+BOX_COLOR = [0.5, 0.4, 0.27]
 
 def Init():
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), DOUBLEBUF | OPENGL)
@@ -70,8 +71,8 @@ def liftHitBox(lift: Lift, box: Box):
 def main():
     lift = Lift([0, 0, 0], 0, 2)
     boxes = []
-    boxes.append(Box([1, 1, 1]))
-    boxes.append(Box([-2, 1, -2]))
+    boxes.append(Box([4, 1, 2], BOX_COLOR))
+    boxes.append(Box([-2, 1, -2], BOX_COLOR))
 
     Init()
     done = False
