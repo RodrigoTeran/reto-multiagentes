@@ -10,6 +10,10 @@ from Utils import draw_cuboid
 
 class Lift:
     def __init__(self, position: list[float], direction: float, angular_speed: float):
+        self.roof_color = [0.7, 0.8, 1.0]
+        self.body_color = [0.7, 0.9, 0.8]
+        self.plate_color = [0.7, 0.7, 0.7]
+        
         self.points = [
             [-0.5, 0, 0.5],
             [-0.5, 0.5, 0.5],
@@ -19,6 +23,12 @@ class Lift:
             [-0.5, 0.5, -1.5],
             [0.5, 0.5, -1.5],
             [0.5, 0, -1.5],
+        ]
+        self.roof_points = [
+            [0.5, 1.01, 0.5],
+            [-0.5, 1.01, 0.5],
+            [-0.5, 1.01, -0.5],
+            [0.5, 1.01, -0.5]
         ]
         self.columns = [
             [  # poste A
@@ -154,7 +164,7 @@ class Lift:
         self.direction = direction
         self.target_direction = -90
         self.angular_speed = angular_speed
-        self.plate = Plate()
+        self.plate = Plate(self.plate_color)
         
         # Se considera la hitbox como la bottom plate del lift 
         self.hitbox_center = self.plate.bottom_plate_center
@@ -167,7 +177,7 @@ class Lift:
         glRotate(self.direction, 0, 1, 0)
 
         # Render main body
-        glColor3f(1, 1, 1)
+        glColor3f(*self.body_color)
         glBegin(GL_QUADS)
         draw_cuboid(self.points)
         glEnd()
@@ -178,6 +188,13 @@ class Lift:
         for column in self.columns:
             for point in column:
                 glVertex3fv(point)
+        glEnd()
+        
+        # Render roof        
+        glColor3f(*self.roof_color) 
+        glBegin(GL_QUADS)
+        for point in self.roof_points:   
+            glVertex3f(*point)
         glEnd()
 
         # Render Plate

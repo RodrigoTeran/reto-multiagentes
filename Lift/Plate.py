@@ -8,7 +8,8 @@ from Utils import draw_cuboid
 
 
 class Plate:
-    def __init__(self):
+    def __init__(self, color: list[float]):
+        self.plate_color = color
         self.bottom_plate = [
             [-0.5, 0, 1],
             [-0.5, 0.15, 1],
@@ -37,7 +38,7 @@ class Plate:
     
     def render(self):
         glPushMatrix()
-        glColor3f(0.7, 0.7, 0.7)
+        glColor3f(*self.plate_color)
         glTranslate(0, self.curr_height, 0)
         glBegin(GL_QUADS)
         draw_cuboid(self.bottom_plate)

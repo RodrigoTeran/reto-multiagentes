@@ -26,7 +26,7 @@ UP_X = 0
 UP_Y = 1
 UP_Z = 0
 
-BOX_COLOR = [0.5, 0.4, 0.27]
+BOX_COLOR = [0.45, 0.35, 0.23]
 
 def Init():
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), DOUBLEBUF | OPENGL)
