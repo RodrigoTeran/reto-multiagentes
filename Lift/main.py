@@ -95,6 +95,8 @@ def main():
             lift.plate.target_height += 0.001 * 3
         if keys[pygame.K_DOWN]:
             lift.plate.target_height -= 0.001 * 3
+        if keys[pygame.K_w]:
+            lift.go_to_point([0,0,1])
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
