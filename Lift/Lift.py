@@ -7,9 +7,11 @@ import numpy as np
 from Plate import Plate
 from Utils import draw_cuboid
 
+TOLERANCE = 0.1
+
 
 class Lift:
-    def __init__(self, position: list[float], direction: float, angular_speed: float):
+    def __init__(self, position: list[float], direction: list[float], speed: float):
         self.points = [
             [-0.5, 0, 0.5],
             [-0.5, 0.5, 0.5],
@@ -151,15 +153,15 @@ class Lift:
             ],
         ]
         self.position = np.array(position)
-        self.direction = direction
-        self.target_direction = -90
-        self.angular_speed = angular_speed
+        self.target_position = np.array(position)
+        self.direction = np.array(direction)
+        self.target_direction = np.array(direction)
+        self.speed = speed
         self.plate = Plate()
 
     def render(self):
         glPushMatrix()
         glTranslate(*self.position)
-        glRotate(self.direction, 0, 1, 0)
 
         # Render main body
         glColor3f(1, 1, 1)
@@ -185,8 +187,8 @@ class Lift:
         self.update()
 
     def update(self):
-        if self.target_direction < self.direction:
-            self.direction -= 1 * self.angular_speed
+        # TODO: Rotate the direction vector to the target direction vector when the target position is updated
 
-        if self.target_direction > self.direction:
-            self.direction += 1 * self.angular_speed
+        # Calculates if distance between target and current is lower than tolerance and moves towards the objective if not.
+        if np.linalg.norm(self.target_position - self.position) > TOLERANCE:
+            self.position += self.direction * self.speed

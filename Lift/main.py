@@ -45,7 +45,7 @@ def Init():
 
 
 def main():
-    lift = Lift([0, 0, 0], 0, 2)
+    lift = Lift([0, 0.0, 0], [1, 0.0, 0], 0.1)
     boxes = []
     boxes.append(Box([1, 1, 1]))
     boxes.append(Box([-2, 1, -2]))
@@ -61,16 +61,6 @@ def main():
                     match event.key:
                         case pygame.K_ESCAPE:
                             done = True
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            lift.target_direction += 1
-        if keys[pygame.K_RIGHT]:
-            lift.target_direction -= 1
-        if keys[pygame.K_UP]:
-            lift.plate.target_height += 0.001 * 3
-        if keys[pygame.K_DOWN]:
-            lift.plate.target_height -= 0.001 * 3
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
