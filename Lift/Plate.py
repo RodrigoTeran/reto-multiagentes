@@ -38,6 +38,8 @@ class Plate:
         self.bottom_plate_center = [0, self.curr_height, 0]
         self.bottom_plate_radius = 0.711 #((0.5 - self.bottom_plate_center[0]) ** 2 + (0.15 - self.bottom_plate_center[1]) ** 2 + (1 - self.bottom_plate_center[2]) ** 2) ** 0.5
         
+        self.boxes = [] 
+        
         
     
     def render(self):
@@ -48,6 +50,11 @@ class Plate:
         draw_cuboid(self.bottom_plate)
         draw_cuboid(self.vertical_plate)
         glEnd()
+        for box in self.boxes:
+            box.position = [0,0,0.51]
+            glTranslate(0, 0.51, 0)
+            box.render()
+            self.curr_height = 0.5
         glPopMatrix()
         self.update()
 
