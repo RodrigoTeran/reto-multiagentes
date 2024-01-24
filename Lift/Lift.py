@@ -3,6 +3,9 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import numpy as np
+from Box import Box
+from Warehouse import Warehouse
+import math
 
 from Plate import Plate
 from Utils import draw_cuboid
@@ -167,6 +170,9 @@ class Lift:
         self.target_position = np.array(position, float)
         self.speed = speed
         self.plate = Plate(self.plate_color)
+        
+        self.scale = 0.2
+        self.radio = math.sqrt(self.scale*self.scale + self.scale*self.scale)
 
         self.dir_vector = [0, 0, 0]  # dir actual
         self.dir_vector[0] = (
@@ -183,6 +189,9 @@ class Lift:
         self.hitbox_radius = (
             self.plate.bottom_plate_radius
         )  # El radio del hitbox siempre es el mismo, ya que la bottom plate no cambia de tamaño
+        
+        self.warehouse = Warehouse([0,0,0], 2)
+        self.moving_to_target = False
 
     def vector_angle(self, vu, vv):  # calcula el +/-angulo entre 2 vectores
         vvx = vv[2]
@@ -194,7 +203,7 @@ class Lift:
     def rotate_dir_vector(
         self,
     ):  # rota progresivamente el vector de dir hasta alcanzar la dir objetivo
-        if self.dir_vector != self.dir_target:
+        if not np.array_equal(self.dir_vector, self.dir_target):
             dif = self.vector_angle(self.dir_vector, self.dir_target)
             if (
                 abs(dif) < 2
@@ -216,12 +225,10 @@ class Lift:
             self.dir_vector = self.dir_vector
 
     def go_to_point(self, target):
-        current = self.position
-        target = target
-        target = [target[0] - current[0], 0, target[2] - current[2]]
-        target = target / np.linalg.norm(target)
-        self.dir_target[0] = target[0]
-        self.dir_target[2] = target[2]
+        self.target_position = np.array(target)
+        direction = self.target_position - self.position
+        self.dir_target = direction / np.linalg.norm(direction)
+        self.moving_to_target = True
 
     def render(self):
         glPushMatrix()
@@ -261,23 +268,77 @@ class Lift:
 
         glPopMatrix()
         self.update()
+        
+    def detCol(self):
+        for box in Box.boxes:
+            # Calcula la distancia entre el lift y el box
+            dist = math.sqrt((box.position[0] - self.position[0])**2 + (box.position[2] - self.position[2])**2)
+
+            # Asumiendo que 'radio' es el radio del box y self tiene una propiedad similar
+            sum_radios = box.radio + self.radio
+
+            # Si hay colisión, detiene el movimiento del self
+            if(dist <= sum_radios):
+                # Se detiene el movimiento del self
+                return box
+                # self.head_to_origin()
+        
+        return None
+    
+    def detWarehouseCol(self):
+        # Calcula la distancia entre el lift y el warehouse
+        dist = math.sqrt((self.warehouse.position[0] - self.position[0])**2 + 
+                         (self.warehouse.position[2] - self.position[2])**2)
+
+        # Asumiendo que 'radio' es el radio del warehouse y self tiene una propiedad similar
+        sum_radios = self.warehouse.radio + self.radio
+
+        # Si hay colisión, devuelve True
+        return dist <= sum_radios
+    
+    def reset_to_safe_position(self):
+        # Establece una nueva posición objetivo dentro de los límites permitidos
+        self.target_position = [random.randint(-20, 20), 0, random.randint(-20, 20)]
+        # Calcula la nueva dirección
+        direction = self.target_position - self.position
+        self.dir_target = direction / np.linalg.norm(direction)
 
     def update(self):
-        if self.dir_vector != self.dir_target:
-            self.rotate_dir_vector()
-            return
-
-        # TODO: En la funcion update, calcular las coordenadas del nuevo centro de la hitbox y actualizar el atributo self.hitbox_center
-        # TODO: Esto se hace una vez que se haya implementado el movimiento de los lifts (Movimiento del robot #5)
-        # Calculates if distance between target and current is lower than tolerance and moves towards the objective if not.
-        if np.linalg.norm(self.target_position - self.position) > TOLERANCE:
-            self.position += np.array(self.dir_vector, float) * self.speed
+        if not self.moving_to_target:
+            box = self.detCol()
+            if(box != None and len(self.plate.boxes) == 0):
+                self.plate.boxes.append(box)
+                self.moving_to_target = True
+                # Establece el warehouse como el target
+                self.target_position = np.array(self.warehouse.position)
+                direction = self.target_position - self.position
+                self.dir_vector = direction / np.linalg.norm(direction)
+        
+        if self.moving_to_target:
+            if np.linalg.norm(self.target_position - self.position) > TOLERANCE:
+                self.position += np.array(self.dir_vector, float) * self.speed
+            
+            if self.detWarehouseCol():
+                # Entregar la caja y volver al comportamiento normal
+                self.plate.boxes.clear()
+                self.moving_to_target = False
+                self.reset_to_safe_position()
         else:
-            self.target_position[0] = random.randint(-20, 20)
-            self.target_position[2] = random.randint(-20, 20)
-            self.dir_target = [
-                *(
-                    (self.target_position - self.position)
-                    / np.linalg.norm(self.position - self.target_position)
-                )
-            ]
+            if not np.array_equal(self.dir_vector, self.dir_target):
+                self.rotate_dir_vector()
+                return
+
+            # TODO: En la funcion update, calcular las coordenadas del nuevo centro de la hitbox y actualizar el atributo self.hitbox_center
+            # TODO: Esto se hace una vez que se haya implementado el movimiento de los lifts (Movimiento del robot #5)
+            # Calculates if distance between target and current is lower than tolerance and moves towards the objective if not.
+            if np.linalg.norm(self.target_position - self.position) > TOLERANCE:
+                self.position += np.array(self.dir_vector, float) * self.speed
+            else:
+                self.target_position[0] = random.randint(-20, 20)
+                self.target_position[2] = random.randint(-20, 20)
+                self.dir_target = [
+                    *(
+                        (self.target_position - self.position)
+                        / np.linalg.norm(self.position - self.target_position)
+                    )
+                ]

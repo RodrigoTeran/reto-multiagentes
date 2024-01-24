@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import math
 
 from Utils import draw_cuboid
 
@@ -19,6 +20,7 @@ class Warehouse:
         ]
         self.position = position
         self.scale = scale
+        self.radio = math.sqrt(self.scale*self.scale + self.scale*self.scale)
         self.color = [0.21, 0.14, 0.7]
 
     def render(self):
