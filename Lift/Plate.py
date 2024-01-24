@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import numpy as np
+from Box import Box
 
 from Utils import draw_cuboid
 
@@ -30,11 +31,14 @@ class Plate:
             [0.5, 1, 0],
             [0.5, 0, 0],
         ]
+        
         self.curr_height = 0
         self.target_height = 0
         self.max_height = 0.5
         self.bottom_plate_center = [0, self.curr_height, 0]
-        self.bottom_plate_radius = 0.711 #((0.5 - self.bottom_plate_center[0]) ** 2 + (0.15 - self.bottom_plate_center[1]) ** 2 + (1 - self.bottom_plate_center[2]) ** 2) ** 0.5 
+        self.bottom_plate_radius = 0.711 #((0.5 - self.bottom_plate_center[0]) ** 2 + (0.15 - self.bottom_plate_center[1]) ** 2 + (1 - self.bottom_plate_center[2]) ** 2) ** 0.5
+        
+        
     
     def render(self):
         glPushMatrix()

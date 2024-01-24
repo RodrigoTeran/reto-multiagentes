@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+import math
 from Utils import draw_cuboid
 
 
@@ -19,8 +20,9 @@ class Box:
             [0.5, 0.5, -0.5],
             [0.5, -0.5, -0.5],
         ]
-
         
+        self.scale = 1.0
+        self.radio = math.sqrt(self.scale*self.scale + self.scale*self.scale)
         self.position = position
         self.color = color
         Box.boxes.append(self)

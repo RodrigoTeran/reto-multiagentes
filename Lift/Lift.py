@@ -3,6 +3,8 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import numpy as np
+from Box import Box
+import math
 
 from Plate import Plate
 from Utils import draw_cuboid
@@ -167,6 +169,9 @@ class Lift:
         self.target_position = np.array(position, float)
         self.speed = speed
         self.plate = Plate(self.plate_color)
+        
+        self.scale = 0.2
+        self.radio = math.sqrt(self.scale*self.scale + self.scale*self.scale)
 
         self.dir_vector = [0, 0, 0]  # dir actual
         self.dir_vector[0] = (
@@ -183,6 +188,9 @@ class Lift:
         self.hitbox_radius = (
             self.plate.bottom_plate_radius
         )  # El radio del hitbox siempre es el mismo, ya que la bottom plate no cambia de tamaño
+        
+        self.boxes = [] 
+        self.moving_to_target = False
 
     def vector_angle(self, vu, vv):  # calcula el +/-angulo entre 2 vectores
         vvx = vv[2]
@@ -216,12 +224,10 @@ class Lift:
             self.dir_vector = self.dir_vector
 
     def go_to_point(self, target):
-        current = self.position
-        target = target
-        target = [target[0] - current[0], 0, target[2] - current[2]]
-        target = target / np.linalg.norm(target)
-        self.dir_target[0] = target[0]
-        self.dir_target[2] = target[2]
+        self.target_position = np.array(target)
+        direction = self.target_position - self.position
+        self.dir_target = direction / np.linalg.norm(direction)
+        self.moving_to_target = True
 
     def render(self):
         glPushMatrix()
@@ -257,12 +263,38 @@ class Lift:
         glPushMatrix()
         glTranslate(0, 0, 0.51)
         self.plate.render()
+        for box in self.boxes:
+            box.position = [0,0,0.51]
+            glTranslate(0, 0.51, 0)
+            box.render()
         glPopMatrix()
 
         glPopMatrix()
         self.update()
+        
+    def detCol(self):
+        for box in Box.boxes:
+            # Calcula la distancia entre el lift y el box
+            dist = math.sqrt((box.position[0] - self.position[0])**2 + (box.position[2] - self.position[2])**2)
+
+            # Asumiendo que 'radio' es el radio del box y self tiene una propiedad similar
+            sum_radios = box.radio + self.radio
+
+            # Si hay colisión, detiene el movimiento del self
+            if(dist <= sum_radios):
+                # Se detiene el movimiento del self
+                return box
+                # self.head_to_origin()
+        
+        return None
+
 
     def update(self):
+        box = self.detCol()
+        if(box != None):
+            self.boxes.append(box)
+            # self.go_to_point([0,0,0])
+
         if self.dir_vector != self.dir_target:
             self.rotate_dir_vector()
             return
