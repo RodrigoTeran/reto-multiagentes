@@ -52,23 +52,34 @@ def Init():
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+
 def main():
     lifts = []
     for _ in range(5):
-        lifts.append(Lift([1.0, 0, 2], [0, 0, 0], 0.1))
+        lifts.append(
+            Lift(
+                [
+                    randint(-PLANE_WIDTH, PLANE_WIDTH),
+                    0,
+                    randint(-PLANE_LENGTH, PLANE_LENGTH),
+                ],
+                [0, 0, 0],
+                0.1,
+            )
+        )
     boxes = []
     for _ in range(15):
         boxes.append(
             Box(
                 [
-                    randint(-PLANE_WIDTH, PLANE_WIDTH),
+                    randint(-PLANE_WIDTH + 1, PLANE_WIDTH - 1),
                     1,
-                    randint(-PLANE_LENGTH, PLANE_LENGTH),
+                    randint(-PLANE_LENGTH + 1, PLANE_LENGTH - 1),
                 ],
                 BOX_COLOR,
             )
         )
-    warehouse = Warehouse([0, 0, 0], 2)
+    warehouse = Warehouse([1, 2, 1], 2)
 
     Init()
     done = False

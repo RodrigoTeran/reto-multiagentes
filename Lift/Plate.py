@@ -31,17 +31,15 @@ class Plate:
             [0.5, 1, 0],
             [0.5, 0, 0],
         ]
-        
+
         self.curr_height = 0
         self.target_height = 0
         self.max_height = 0.5
         self.bottom_plate_center = [0, self.curr_height, 0]
-        self.bottom_plate_radius = 0.711 #((0.5 - self.bottom_plate_center[0]) ** 2 + (0.15 - self.bottom_plate_center[1]) ** 2 + (1 - self.bottom_plate_center[2]) ** 2) ** 0.5
-        
-        self.boxes = [] 
-        
-        
-    
+        self.bottom_plate_radius = 0.711  # ((0.5 - self.bottom_plate_center[0]) ** 2 + (0.15 - self.bottom_plate_center[1]) ** 2 + (1 - self.bottom_plate_center[2]) ** 2) ** 0.5
+
+        self.boxes = []
+
     def render(self):
         glPushMatrix()
         glColor3f(*self.plate_color)
@@ -51,19 +49,22 @@ class Plate:
         draw_cuboid(self.vertical_plate)
         glEnd()
         for box in self.boxes:
-            box.position = [0,0,0.51]
+            box.position = [0, 0, 0.51]
             glTranslate(0, 0.51, 0)
             box.render()
-            self.curr_height = 0.5
+            self.target_height = 0.5
         glPopMatrix()
         self.update()
 
     def update(self):
+        if not self.boxes:
+            self.target_height = 0
+
         if self.curr_height < self.target_height and self.curr_height < self.max_height:
-            self.curr_height += 0.001 * 3
+            self.curr_height += 0.005 * 3
 
         if self.curr_height > self.target_height and self.curr_height > 0:
-            self.curr_height -= 0.001 * 3
+            self.curr_height -= 0.005 * 3
 
         if self.target_height < 0:
             self.target_height = 0
