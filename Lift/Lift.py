@@ -271,6 +271,7 @@ class Lift:
         
     def detCol(self):
         for box in Box.boxes:
+            if box.delivered: continue
             # Calcula la distancia entre el lift y el box
             dist = math.sqrt((box.position[0] - self.position[0])**2 + (box.position[2] - self.position[2])**2)
 
@@ -320,6 +321,8 @@ class Lift:
             
             if self.detWarehouseCol():
                 # Entregar la caja y volver al comportamiento normal
+                curr_box = self.plate.boxes[0]
+                curr_box.delivered = True
                 self.plate.boxes.clear()
                 self.moving_to_target = False
                 self.reset_to_safe_position()
