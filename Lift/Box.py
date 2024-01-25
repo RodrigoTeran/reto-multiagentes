@@ -24,6 +24,7 @@ class Box:
         self.scale = 1.0
         self.radio = math.sqrt(self.scale*self.scale + self.scale*self.scale)
         self.position = position
+        self.delivered = False
         self.color = color
         Box.boxes.append(self)
         # El centro del cubo son las coordenadas de self.position, por eso no creamos un atributo self.center
