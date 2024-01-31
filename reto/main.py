@@ -12,6 +12,8 @@ from Utils import Axis, plane, horizons
 import sys
 sys.path.append('..')
 
+from TrafficLight import TrafficLight
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
@@ -65,12 +67,15 @@ def Texturas(filepath):
     image_data = pygame.image.tostring(image,"RGBA")
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
     glGenerateMipmap(GL_TEXTURE_2D) 
-    
+
+trafficlight = TrafficLight()
+
 def main():
     Init()
     Texturas("reto-multiagentes/reto/Suelo.bmp")
     Texturas("reto-multiagentes/reto/Cielo.bmp")
     done = False
+    
     while not done:
         for event in pygame.event.get():
             match event.type:
@@ -86,7 +91,7 @@ def main():
         Axis()
         plane(PLANE_WIDTH, PLANE_LENGTH, 0, [1, 1, 1], textures[0])
         horizons(20, 20, 10, [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]], textures[1])
-
+        trafficlight.draw()
 
         pygame.display.flip()
         pygame.time.wait(10)
