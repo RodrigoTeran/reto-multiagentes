@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import math
+import random
 
 
 class TrafficLight:
@@ -11,9 +12,9 @@ class TrafficLight:
             "red": (1.0, 0.0, 0.0),
             "yellow": (1.0, 1.0, 0.0),
             "green": (0.0, 1.0, 0.0),
-            "blue": (0.0, 0.0, 1.0)
+            "blue": (0.0, 0.0, 0.5)
         }
-        self.current_color = "red"
+        self.current_color = "red" # Which color is currently on.
         length = 0.6
         width = 0.4
         height = 0.15
