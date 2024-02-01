@@ -7,7 +7,9 @@ import random
 
 
 class TrafficLight:
-    def __init__(self):
+    def __init__(self, position, rotation):
+        self.pos = position
+        self.rotation = rotation
         self.colors = {
             "red": (1.0, 0.0, 0.0),
             "yellow": (1.0, 1.0, 0.0),
@@ -15,9 +17,9 @@ class TrafficLight:
             "blue": (0.0, 0.0, 0.5)
         }
         self.current_color = "red" # Which color is currently on.
-        length = 0.6
-        width = 0.4
-        height = 0.15
+        length = 3
+        width = 1
+        height = 0.75
         self.points = [
             [-length/2, -width/2, height/2],  # bottom-left-front
             [-length/2, width/2, height/2],   # top-left-front
@@ -92,13 +94,19 @@ class TrafficLight:
         
     def draw(self):
         glPushMatrix()
-        glScaled(5, 5, 5)
+        glTranslatef(self.pos[0] ,
+                     self.pos[1] ,
+                     self.pos[2] )
+        glRotatef(*self.rotation)
+        
+        # Draw cuboid
         glColor3f(1.0, 1.0, 1.0)
         self.drawFaces()
-        glPopMatrix()
-
+   
+        
+        
         # Draw lights
-        for color, position in zip(self.colors.keys(), [(-0.6, 1.1, 1), (0.2, 1.1, 1), (1.0, 1.1, 1), (1.8, 1.1, 1)]):
+        for color, position in zip(self.colors.keys(), [(-1.3, 0.15, 0.5), (-0.5, 0.15, 0.5), (0.3, 0.15, 0.5), (1.1, 0.15, 0.5)]):
             if color == self.current_color:
                 intensity = 2.0  # Brighter if the current color
             else:
@@ -109,3 +117,4 @@ class TrafficLight:
             glTranslated(*position)
             self.draw_sphere(0.2, 50, 50)
             glPopMatrix()
+        glPopMatrix()

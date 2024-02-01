@@ -68,7 +68,13 @@ def Texturas(filepath):
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
     glGenerateMipmap(GL_TEXTURE_2D) 
 
-trafficlight = TrafficLight()
+traffic_lights = []
+positions = [[0, 5, -10], [-10, 5, 0], [0, 5, 10], [10, 5, 0]]
+rotations = [[0, 0, 0, 0], [90, 0, 1, 0], [180, 0, 1, 0], [-90, 0, 1, 0]]
+
+for i in range(4):
+    traffic_lights.append(TrafficLight(positions[i], rotations[i]))
+
 
 def main():
     Init()
@@ -91,7 +97,9 @@ def main():
         Axis()
         plane(PLANE_WIDTH, PLANE_LENGTH, 0, [1, 1, 1], textures[0])
         horizons(20, 20, 10, [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]], textures[1])
-        trafficlight.draw()
+        
+        for tl in traffic_lights:
+            tl.draw()
 
         pygame.display.flip()
         pygame.time.wait(10)
