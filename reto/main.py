@@ -67,7 +67,7 @@ def Texturas(filepath):
     w, h = image.get_rect().size
     image_data = pygame.image.tostring(image,"RGBA")
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
-    glGenerateMipmap(GL_TEXTURE_2D) 
+    glGenerateMipmap(GL_TEXTURE_2D)
 
 traffic_lights = []
 cars = []
@@ -80,55 +80,34 @@ for i in range(4):
 def add_cars():
     # -z
     cars.append(
-        Car(1, 2)
+        Car(1, 4, textures[2], textures[3])
     )
     cars.append(
-        Car(1, 3)
+        Car(1, 2, textures[2], textures[3])
     )
     cars.append(
-        Car(1, 4)
+        Car(1, 3, textures[2], textures[3])
     )
     cars.append(
-        Car(1, 2)
+        Car(1, 4, textures[2], textures[3])
     )
     cars.append(
-        Car(1, 3)
+        Car(1, 2, textures[2], textures[3])
     )
     cars.append(
-        Car(1, 4)
-    )
-    cars.append(
-        Car(1, 2)
+        Car(1, 1, textures[2], textures[3])
     )
 
-    cars.append(
-        Car(2, 1)
-    )
-    cars.append(
-        Car(2, 3)
-    )
-    cars.append(
-        Car(2, 4)
-    )
-    cars.append(
-        Car(2, 4)
-    )
-    cars.append(
-        Car(2, 3)
-    )
-    cars.append(
-        Car(2, 4)
-    )
-    cars.append(
-        Car(2, 3)
-    )
-
-add_cars()
 
 def main():
     Init()
     Texturas("./reto/Suelo.bmp")
     Texturas("./reto/Cielo.bmp")
+    Texturas("./reto/carMetalic.bmp")
+    Texturas("./reto/glass.bmp")
+
+    add_cars()
+
     done = False
     
     while not done:

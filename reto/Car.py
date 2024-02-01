@@ -12,9 +12,9 @@ TOLERANCE = 1
 class Car:
     cars: list["Car"] = []
 
-    def __init__(self, street: int, destination: int):
-        self.roof_color = [0.7, 0.8, 1.0]
-        self.body_color = [0.7, 0.9, 0.8] 
+    def __init__(self, street: int, destination: int, texture_car, texture_glass):
+        self.texture_car = texture_car
+        self.texture_glass = texture_glass
         self.points = [
             [-0.5, 0, 0.5],
             [-0.5, 0.5, 0.5],
@@ -26,140 +26,88 @@ class Car:
             [0.5, 0, -1.5],
         ]
         self.roof_points = [
-            [0.5, 1.01, 0.5],
-            [-0.5, 1.01, 0.5],
-            [-0.5, 1.01, -0.5],
-            [0.5, 1.01, -0.5],
+            [0.5, 1.01, -0.3],
+            [-0.5, 1.01, -0.3],
+            [-0.5, 1.01, -1],
+            [0.5, 1.01, -1],
         ]
-        self.columns = [
-            [  # poste A
+        self.left_directional = [
+            [0.5, 0.6, 0.35],
+            [0.25, 0.6, 0.35],
+            [0.25, 0.6, 0.5],
+            [0.5, 0.6, 0.5]
+        ]
+        self.right_directional = [
+            [-0.5, 0.6, 0.35],
+            [-0.25, 0.6, 0.35],
+            [-0.25, 0.6, 0.5],
+            [-0.5, 0.6, 0.5]
+        ]
+        self.windows = [
+            [  # Ventana delantera
                 # base
-                [0.5, 0.5, 0.5],
-                [0.3, 0.5, 0.5],
-                [0.3, 0.5, 0.3],
-                [0.5, 0.5, 0.3],
+                [0.5, 0.5, 0.1],
+                [-0.5, 0.5, 0.1],
+                [-0.5, 0.5, -0.1],
+                [0.5, 0.5, -0.1],
                 # top
-                [0.5, 1.0, 0.5],
-                [0.3, 1.0, 0.5],
-                [0.3, 1.0, 0.3],
-                [0.5, 1.0, 0.3],
+                [0.5, 1.0, -0.25],
+                [-0.5, 1.0, -0.25],
+                [-0.5, 1.0, -0.45],
+                [0.5, 1.0, -0.45],
                 # z face
-                [0.5, 0.5, 0.5],
-                [0.3, 0.5, 0.5],
-                [0.3, 1.0, 0.5],
-                [0.5, 1.0, 0.5],
+                [0.5, 0.5, 0.1],
+                [-0.5, 0.5, 0.1],
+                [-0.5, 1.0, -0.25],
+                [0.5, 1.0, -0.25],
                 # -z face
-                [0.3, 0.5, 0.3],
-                [0.5, 0.5, 0.3],
-                [0.5, 1.0, 0.3],
-                [0.3, 1.0, 0.3],
+                [-0.5, 0.5, -0.1],
+                [0.5, 0.5, -0.1],
+                [0.5, 1.0, -0.45],
+                [-0.5, 1.0, -0.45],
                 # x face
-                [0.5, 0.5, 0.3],
-                [0.5, 0.5, 0.5],
-                [0.5, 1.0, 0.5],
-                [0.5, 1.0, 0.3],
+                [0.5, 0.5, -0.1],
+                [0.5, 0.5, 0.1],
+                [0.5, 1.0, -0.25],
+                [0.5, 1.0, -0.45],
                 # -x face
-                [0.3, 0.5, 0.5],
-                [0.3, 0.5, 0.3],
-                [0.3, 1.0, 0.3],
-                [0.3, 1.0, 0.5],
+                [-0.5, 0.5, 0.1],
+                [-0.5, 0.5, -0.1],
+                [-0.5, 1.0, -0.45],
+                [-0.5, 1.0, -0.25],
             ],
-            [  # poste B
+            [  # Ventana trasera
                 # base
-                [-0.5, 0.5, 0.5],
-                [-0.5, 0.5, 0.3],
-                [-0.3, 0.5, 0.3],
-                [-0.3, 0.5, 0.5],
+                [0.5, 0.5, 0.1 - 1.2],
+                [-0.5, 0.5, 0.1 - 1.2],
+                [-0.5, 0.5, -0.1 - 1.2],
+                [0.5, 0.5, -0.1 - 1.2],
                 # top
-                [-0.5, 1.0, 0.5],
-                [-0.5, 1.0, 0.3],
-                [-0.3, 1.0, 0.3],
-                [-0.3, 1.0, 0.5],
+                [0.5, 1.0, -0.25 - 0.5],
+                [-0.5, 1.0, -0.25 - 0.5],
+                [-0.5, 1.0, -0.45 - 0.5],
+                [0.5, 1.0, -0.45 - 0.5],
                 # z face
-                [-0.3, 0.5, 0.5],
-                [-0.5, 0.5, 0.5],
-                [-0.5, 1.0, 0.5],
-                [-0.3, 1.0, 0.5],
+                [0.5, 0.5, 0.1 - 1.2],
+                [-0.5, 0.5, 0.1 - 1.2],
+                [-0.5, 1.0, -0.25 - 0.5],
+                [0.5, 1.0, -0.25 - 0.5],
                 # -z face
-                [-0.5, 0.5, 0.3],
-                [-0.3, 0.5, 0.3],
-                [-0.3, 1.0, 0.3],
-                [-0.5, 1.0, 0.3],
+                [-0.5, 0.5, -0.1 - 1.2],
+                [0.5, 0.5, -0.1 - 1.2],
+                [0.5, 1.0, -0.45 - 0.5],
+                [-0.5, 1.0, -0.45 - 0.5],
                 # x face
-                [-0.3, 0.5, 0.3],
-                [-0.3, 0.5, 0.5],
-                [-0.3, 1.0, 0.5],
-                [-0.3, 1.0, 0.3],
+                [0.5, 0.5, -0.1 - 1.2],
+                [0.5, 0.5, 0.1 - 1.2],
+                [0.5, 1.0, -0.25 - 0.5],
+                [0.5, 1.0, -0.45 - 0.5],
                 # -x face
-                [-0.5, 0.5, 0.5],
-                [-0.5, 0.5, 0.3],
-                [-0.5, 1.0, 0.3],
-                [-0.5, 1.0, 0.5],
-            ],
-            [  # poste C
-                # base
-                [-0.5, 0.5, -0.3],
-                [-0.5, 0.5, -0.5],
-                [-0.3, 0.5, -0.5],
-                [-0.3, 0.5, -0.3],
-                # top
-                [-0.5, 1.0, -0.3],
-                [-0.5, 1.0, -0.5],
-                [-0.3, 1.0, -0.5],
-                [-0.3, 1.0, -0.3],
-                # z face
-                [-0.3, 0.5, -0.3],
-                [-0.5, 0.5, -0.3],
-                [-0.5, 1.0, -0.3],
-                [-0.3, 1.0, -0.3],
-                # -z face
-                [-0.5, 0.5, -0.5],
-                [-0.3, 0.5, -0.5],
-                [-0.3, 1.0, -0.5],
-                [-0.5, 1.0, -0.5],
-                # x face
-                [-0.3, 0.5, -0.5],
-                [-0.3, 0.5, -0.3],
-                [-0.3, 1.0, -0.3],
-                [-0.3, 1.0, -0.5],
-                # -x face
-                [-0.5, 0.5, -0.3],
-                [-0.5, 0.5, -0.5],
-                [-0.5, 1.0, -0.5],
-                [-0.5, 1.0, -0.3],
-            ],
-            [  # poste D
-                # base
-                [0.3, 0.5, -0.3],
-                [0.3, 0.5, -0.5],
-                [0.5, 0.5, -0.5],
-                [0.5, 0.5, -0.3],
-                # top
-                [0.3, 1.0, -0.3],
-                [0.3, 1.0, -0.5],
-                [0.5, 1.0, -0.5],
-                [0.5, 1.0, -0.3],
-                # z face
-                [0.5, 0.5, -0.3],
-                [0.3, 0.5, -0.3],
-                [0.3, 1.0, -0.3],
-                [0.5, 1.0, -0.3],
-                # -z face
-                [0.3, 0.5, -0.5],
-                [0.5, 0.5, -0.5],
-                [0.5, 1.0, -0.5],
-                [0.3, 1.0, -0.5],
-                # x face
-                [0.5, 0.5, -0.5],
-                [0.5, 0.5, -0.3],
-                [0.5, 1.0, -0.3],
-                [0.5, 1.0, -0.5],
-                # -x face
-                [0.3, 0.5, -0.3],
-                [0.3, 0.5, -0.5],
-                [0.3, 1.0, -0.5],
-                [0.3, 1.0, -0.3],
-            ],
+                [-0.5, 0.5, 0.1 - 1.2],
+                [-0.5, 0.5, -0.1 - 1.2],
+                [-0.5, 1.0, -0.45 - 0.5],
+                [-0.5, 1.0, -0.25 - 0.5]
+            ]
         ]
         if street == 1:
             starting_position = [-1.5, 0, -17.5]
@@ -189,6 +137,19 @@ class Car:
 
         self.street = street
         self.destination = destination
+        self.directionals_ticks = 0
+        self.max_directionals_ticks = 10
+
+        self.intent = "straight"
+
+        if self.street <= 3 and self.street == self.destination - 1:
+            self.intent = "right"
+        if self.street >= 2 and self.street == self.destination + 1:
+            self.intent = "left"
+        if self.street == 4 and self.destination == 1:
+            self.intent = "right"
+        if self.street == 1 and self.destination == 4:
+            self.intent = "left"
 
         self.position = np.array(starting_position, float)
         self.target_position = np.array(starting_position, float) # Current
@@ -282,28 +243,71 @@ class Car:
             self.vector_angle([0, 0, 1], self.dir_vector), 0, 1, 0
         )
 
+        # Activar y enlazar la textura
+        glPushMatrix()
+        glColor3fv([1, 1, 1])
+
         # Render main body
-        glColor3f(*self.body_color)
+        glColor3f(*[1.0, 0.0, 0.0])
         glBegin(GL_QUADS)
         self.draw_cuboid(self.points)
         glEnd()
 
-        # Render pilot seat
-        glColor3f(0.3, 0.3, 0.3)
-        glBegin(GL_QUADS)
-        for column in self.columns:
-            for point in column:
-                glVertex3fv(point)
-        glEnd()
-
         # Render roof
-        glColor3f(*self.roof_color)
+        glColor3f(*[1.0, 0.0, 0.0])
         glBegin(GL_QUADS)
         for point in self.roof_points:
             glVertex3f(*point)
         glEnd()
 
+        # Desactivar el uso de texturas
         glPopMatrix()
+        glDisable(GL_TEXTURE_2D)
+
+        # Render windows
+        glColor3f(*[0.0, 0.0, 1.0])
+        glBegin(GL_QUADS)
+        for window in self.windows:
+            for point in window:
+                glVertex3fv(point)
+        glEnd()
+
+        # Render directionals        
+        off = [0.0, 1.0, 1.0]
+        on = [1.0, 1.0, 0.0]
+
+        # left
+        if self.intent == "left":
+            if self.directionals_ticks < self.max_directionals_ticks / 2:
+                glColor3f(*off)
+            else:
+                glColor3f(*on)
+        else:
+            glColor3f(*off)
+
+        glBegin(GL_QUADS)
+        for point in self.left_directional:
+            glVertex3f(*point)
+        glEnd()
+
+        # right
+        if self.intent == "right":
+            if self.directionals_ticks < self.max_directionals_ticks / 2:
+                glColor3f(*off)
+            else:
+                glColor3f(*on)
+        else:
+            glColor3f(*off)
+
+        glBegin(GL_QUADS)
+        for point in self.right_directional:
+            glVertex3f(*point)
+        glEnd()
+
+        glPopMatrix()
+
+        self.directionals_ticks = (self.directionals_ticks + 1) % self.max_directionals_ticks
+
         self.update()
 
 
