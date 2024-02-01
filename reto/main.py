@@ -13,6 +13,7 @@ import sys
 sys.path.append('..')
 
 from TrafficLight import TrafficLight
+from Car import Car
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -69,17 +70,65 @@ def Texturas(filepath):
     glGenerateMipmap(GL_TEXTURE_2D) 
 
 traffic_lights = []
+cars = []
 positions = [[0, 5, -10], [-10, 5, 0], [0, 5, 10], [10, 5, 0]]
 rotations = [[0, 0, 0, 0], [90, 0, 1, 0], [180, 0, 1, 0], [-90, 0, 1, 0]]
 
 for i in range(4):
     traffic_lights.append(TrafficLight(positions[i], rotations[i]))
 
+def add_cars():
+    # -z
+    cars.append(
+        Car(1, 2)
+    )
+    cars.append(
+        Car(1, 3)
+    )
+    cars.append(
+        Car(1, 4)
+    )
+    cars.append(
+        Car(1, 2)
+    )
+    cars.append(
+        Car(1, 3)
+    )
+    cars.append(
+        Car(1, 4)
+    )
+    cars.append(
+        Car(1, 2)
+    )
+
+    cars.append(
+        Car(2, 1)
+    )
+    cars.append(
+        Car(2, 3)
+    )
+    cars.append(
+        Car(2, 4)
+    )
+    cars.append(
+        Car(2, 4)
+    )
+    cars.append(
+        Car(2, 3)
+    )
+    cars.append(
+        Car(2, 4)
+    )
+    cars.append(
+        Car(2, 3)
+    )
+
+add_cars()
 
 def main():
     Init()
-    Texturas("reto-multiagentes/reto/Suelo.bmp")
-    Texturas("reto-multiagentes/reto/Cielo.bmp")
+    Texturas("./reto/Suelo.bmp")
+    Texturas("./reto/Cielo.bmp")
     done = False
     
     while not done:
@@ -100,9 +149,11 @@ def main():
         
         for tl in traffic_lights:
             tl.draw()
+        for car in cars:
+            car.render()
 
         pygame.display.flip()
-        pygame.time.wait(10)
+        pygame.time.wait(1)
 
     pygame.quit()
 
