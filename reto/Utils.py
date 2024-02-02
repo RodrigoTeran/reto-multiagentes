@@ -58,8 +58,32 @@ def plane(width: float, length: float, height: float, color: list[float], textur
     # Desactivar el uso de texturas
     glDisable(GL_TEXTURE_2D)
 
-    
-def horizons(width: float, length: float, height: float, colors: list[list[float]], texture_id):
+
+def solid_plane(width: float, length: float, height: float, color: list[float]):
+    points = [
+        [-width, height, -length],
+        [-width, height, length],
+        [width, height, length],
+        [width, height, -length],
+    ]
+
+    glPushMatrix()
+    glColor3fv(color)
+    glBegin(GL_QUADS)
+
+    # Asignar coordenadas de textura a cada vértice
+    glVertex3fv(points[0])
+    glVertex3fv(points[1])
+    glVertex3fv(points[2])
+    glVertex3fv(points[3])
+
+    glEnd()
+    glPopMatrix()
+
+
+def horizons(
+    width: float, length: float, height: float, colors: list[list[float]], texture_id
+):
     # Asegurarse de que hay un color para cada pared
     if len(colors) != 4:
         raise ValueError("Se requieren exactamente 4 colores, uno para cada pared")
@@ -93,7 +117,8 @@ def horizons(width: float, length: float, height: float, colors: list[list[float
         [width, 0, -length],
     ]
 
-    walls = [frontWall, backWall, leftWall, rightWall]
+    # walls = [frontWall, backWall, leftWall, rightWall]
+    walls = [backWall, leftWall]
 
     # Activar y enlazar la textura
     glEnable(GL_TEXTURE_2D)

@@ -7,13 +7,15 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from random import randint
-from Utils import Axis, plane, horizons
+from Utils import Axis, plane, horizons, solid_plane
 
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 from TrafficLight import TrafficLight
 from Car import Car
+from objloader import OBJ
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -54,20 +56,25 @@ def Init():
     glEnable(GL_DEPTH_TEST)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    
+
+
 def Texturas(filepath):
     textures.append(glGenTextures(1))
     id = len(textures) - 1
     glBindTexture(GL_TEXTURE_2D, textures[id])
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     image = pygame.image.load(filepath).convert()
     w, h = image.get_rect().size
-    image_data = pygame.image.tostring(image,"RGBA")
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+    image_data = pygame.image.tostring(image, "RGBA")
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data
+    )
     glGenerateMipmap(GL_TEXTURE_2D)
+    glDisable(GL_TEXTURE_2D)
+
 
 traffic_lights = []
 cars = []
@@ -77,39 +84,38 @@ rotations = [[0, 0, 0, 0], [90, 0, 1, 0], [180, 0, 1, 0], [-90, 0, 1, 0]]
 for i in range(4):
     traffic_lights.append(TrafficLight(positions[i], rotations[i]))
 
+
 def add_cars():
     # -z
-    cars.append(
-        Car(1, 4, textures[2], textures[3])
-    )
-    cars.append(
-        Car(1, 2, textures[2], textures[3])
-    )
-    cars.append(
-        Car(1, 3, textures[2], textures[3])
-    )
-    cars.append(
-        Car(1, 4, textures[2], textures[3])
-    )
-    cars.append(
-        Car(1, 2, textures[2], textures[3])
-    )
-    cars.append(
-        Car(1, 1, textures[2], textures[3])
-    )
+    cars.append(Car(1, 4, textures[2], textures[3]))
+    cars.append(Car(1, 2, textures[2], textures[3]))
+    cars.append(Car(1, 3, textures[2], textures[3]))
+    cars.append(Car(1, 4, textures[2], textures[3]))
+    cars.append(Car(1, 2, textures[2], textures[3]))
+    cars.append(Car(1, 1, textures[2], textures[3]))
 
 
 def main():
     Init()
-    Texturas("./reto/Suelo.bmp")
-    Texturas("./reto/Cielo.bmp")
-    Texturas("./reto/carMetalic.bmp")
-    Texturas("./reto/glass.bmp")
+    Texturas("reto/assets/Suelo.bmp")
+    Texturas("reto/assets/cielo.bmp")
+    Texturas("reto/assets/carMetalic.bmp")
+    Texturas("reto/assets/glass.bmp")
+    Texturas("reto/assets/concrete.bmp")
 
     add_cars()
 
+    building = OBJ("reto/assets/Apartment_Building_01_obj.obj")
+    building2 = OBJ("reto/assets/building.obj")
+    tree = OBJ("reto/assets/masktree3.obj")
+    tree2 = OBJ("reto/assets/masktree3.obj")
+    tree3 = OBJ("reto/assets/masktree3.obj")
+    tree4 = OBJ("reto/assets/masktree3.obj")
+    tree5 = OBJ("reto/assets/masktree3.obj")
+    tree6 = OBJ("reto/assets/masktree3.obj")
+
     done = False
-    
+
     while not done:
         for event in pygame.event.get():
             match event.type:
@@ -122,14 +128,101 @@ def main():
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        Axis()
+        # Axis()
         plane(PLANE_WIDTH, PLANE_LENGTH, 0, [1, 1, 1], textures[0])
-        horizons(20, 20, 10, [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]], textures[1])
-        
+        horizons(
+            PLANE_WIDTH,
+            PLANE_LENGTH,
+            25,
+            [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]],
+            textures[1],
+        )
+        solid_plane(
+            200,
+            200,
+            -2,
+            [
+                0 / 255,
+                150 / 255,
+                64 / 255,
+            ],
+        )
+        solid_plane(
+            100,
+            2.5,
+            -0.01,
+            [
+                84 / 255,
+                83 / 255,
+                83 / 255,
+            ],
+        )
+        solid_plane(
+            2.5,
+            100,
+            -0.01,
+            [
+                84 / 255,
+                83 / 255,
+                83 / 255,
+            ],
+        )
+        solid_plane(
+            4.75,
+            100,
+            -0.11,
+            [
+                179 / 255,
+                178 / 255,
+                178 / 255,
+            ],
+        )
+        solid_plane(
+            100,
+            4.75,
+            -0.11,
+            [
+                179 / 255,
+                178 / 255,
+                178 / 255,
+            ],
+        )
         for tl in traffic_lights:
             tl.draw()
         for car in cars:
             car.render()
+
+        glBindTexture(GL_TEXTURE_2D, 5)
+        glPushMatrix()
+        glColor3f(1, 1, 1)
+        glTranslate(14, 0, -10)
+        glScale(0.01, 0.01, 0.01)
+        building.render()
+        glPopMatrix()
+        glPushMatrix()
+        glTranslate(-12, 0, -12)
+        glScale(0.2, 0.2, 0.2)
+        building2.render()
+        glPopMatrix()
+        glPushMatrix()
+        glTranslate(-10, 0, 10)
+        glScale(0.8, 0.8, 0.8)
+        glRotate(-30, 0, 1, 0)
+        tree.render()
+        glTranslate(-2, 0, 5)
+        tree2.render()
+        glTranslate(5, 0, 3)
+        tree3.render()
+        glPopMatrix()
+        glPushMatrix()
+        glTranslate(10, 0, 10)
+        glScale(0.5, 0.5, 0.5)
+        tree4.render()
+        glTranslate(2, 0, 3)
+        tree5.render()
+        glTranslate(-5, 0, -2)
+        tree6.render()
+        glPopMatrix()
 
         pygame.display.flip()
         pygame.time.wait(1)

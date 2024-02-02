@@ -1,0 +1,24 @@
+# Blender3D MTL File: masktree3.blend
+# Material Count: 2
+newmtl tree_tree2.tga
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.225536 0.253526 0.099925
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 0
+# map_Kd tree1.tga
+
+
+newmtl alpha_tree2.tga
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+#map_Kd tree1.tga
+
+
