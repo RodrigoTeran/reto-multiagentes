@@ -86,13 +86,11 @@ for i in range(4):
 
 
 def add_cars():
-    # -z
-    cars.append(Car(1, 4, textures[2], textures[3]))
     cars.append(Car(1, 2, textures[2], textures[3]))
-    cars.append(Car(1, 3, textures[2], textures[3]))
-    cars.append(Car(1, 4, textures[2], textures[3]))
-    cars.append(Car(1, 2, textures[2], textures[3]))
-    cars.append(Car(1, 1, textures[2], textures[3]))
+    cars.append(Car(2, 3, textures[2], textures[3]))
+    cars.append(Car(3, 4, textures[2], textures[3]))
+    cars.append(Car(4, 1, textures[2], textures[3]))
+    
 
 
 def main():

@@ -109,6 +109,21 @@ class Car:
                 [-0.5, 1.0, -0.25 - 0.5]
             ]
         ]
+
+        self.place_car(street, destination)
+
+        self.speed = 1
+        self.radio = 1.45
+        self.directionals_ticks = 0
+        self.max_directionals_ticks = 10
+        Car.cars.append(self)
+        self.id = random()
+        self.is_waiting_for_light = False
+    
+    def place_car(self, street, destination):
+        if street == destination:
+            raise Exception("Están prohibidas las vueltas en U... :(")
+
         if street == 1:
             starting_position = [-1.5, 0, -17.5]
             target_position_to_wait = [-1.5, 0, -7]
@@ -122,23 +137,27 @@ class Car:
             starting_position = [17.5, 0, -1.5]
             target_position_to_wait = [7, 0, -1.5]
 
+        tolerance_left_turn = 1.1
+
         if destination == 1:
             target_position_to_turn = [1.5, 0, -7]
             target_position_to_leave = [1.5, 0, -17.5]
+            self.mid_target_position_to_turn = [-tolerance_left_turn, 0, -tolerance_left_turn]
         elif destination == 2:
             target_position_to_turn = [-7, 0, -1.5]
             target_position_to_leave = [-17.5, 0, -1.5]
+            self.mid_target_position_to_turn = [-tolerance_left_turn, 0, tolerance_left_turn]
         elif destination == 3:
             target_position_to_turn = [-1.5, 0, 7]
             target_position_to_leave = [-1.5, 0, 17.5]
+            self.mid_target_position_to_turn = [tolerance_left_turn, 0, tolerance_left_turn]
         elif destination == 4:
             target_position_to_turn = [7, 0, 1.5]
             target_position_to_leave = [17.5, 0, 1.5]
+            self.mid_target_position_to_turn = [tolerance_left_turn, 0, -tolerance_left_turn]
 
         self.street = street
         self.destination = destination
-        self.directionals_ticks = 0
-        self.max_directionals_ticks = 10
 
         self.intent = "straight"
 
@@ -153,23 +172,17 @@ class Car:
 
         self.position = np.array(starting_position, float)
         self.target_position = np.array(starting_position, float) # Current
-        
         self.target_position_to_wait = target_position_to_wait
         self.target_position_to_turn = target_position_to_turn
         self.target_position_to_leave = target_position_to_leave
 
-        self.speed = 1
-        self.radio = 1.5
-        Car.cars.append(self)
-        self.id = random()
-        
         # dir vectors
         self.dir_vector = [0, 0, 0]
         self.dir_target = self.dir_vector.copy()
 
         self.moving_to_target = False
         self.step = 0 # 0 -> moverse a la linea, 1 -> dar vuelta, 2 -> irse
-    
+
     def vector_angle(self, vu, vv):  # calcula el +/-angulo entre 2 vectores
         vvx = vv[2]
         vvy = vv[0]
@@ -248,13 +261,23 @@ class Car:
         glColor3fv([1, 1, 1])
 
         # Render main body
-        glColor3f(*[1.0, 0.0, 0.0])
+        if self.street == 1:
+            colorBody = [1.0, 0.0, 0.0]
+        elif self.street == 2:
+            colorBody = [227.0/255, 45.0/255, 243.0/255]
+        elif self.street == 3:
+            colorBody = [222.0/255, 145.0/255, 54.0/255]
+        elif self.street == 4:
+            colorBody = [171.0/255, 230.0/255, 250.0/255]
+        
+
+        glColor3f(*colorBody)
         glBegin(GL_QUADS)
         self.draw_cuboid(self.points)
         glEnd()
 
         # Render roof
-        glColor3f(*[1.0, 0.0, 0.0])
+        glColor3f(*colorBody)
         glBegin(GL_QUADS)
         for point in self.roof_points:
             glVertex3f(*point)
@@ -335,15 +358,30 @@ class Car:
             if car.position[0] >= self.position[0]:
                 return car
             return self
-            
+        
+    def green_light(self):
+        self.is_waiting_for_light = False
+    
+    def red_light(self):
+        self.is_waiting_for_light = True
 
     def update(self):
         if self.step == 0:
             self.go_to_point(self.target_position_to_wait)
-        elif self.step == 1:
-            self.go_to_point(self.target_position_to_turn)
+        elif self.step == 1 or self.step == 1.5:
+            if self.intent == "left":
+                if self.step == 1:
+                    self.go_to_point(self.mid_target_position_to_turn) # go to center
+                else:
+                    self.go_to_point(self.target_position_to_turn)
+            else:
+                self.go_to_point(self.target_position_to_turn)
         elif self.step == 2:
             self.go_to_point(self.target_position_to_leave)
+        elif self.step == 3:
+            # volver al inicio
+            self.step = 0
+            self.place_car(self.street, self.destination)
 
         car = self.detCol()
         if car is not None:
@@ -364,4 +402,10 @@ class Car:
                 self.position += np.array(self.dir_vector, float) * self.speed
             else:
                 # ya ha llegado a ese destino
-                self.step += 1
+                if self.is_waiting_for_light and self.step == 0: return
+
+                if self.intent == "left" and self.step == 1:
+                    self.step = 1.5
+                else:
+                    self.step = math.floor(self.step + 1)
+        pass
