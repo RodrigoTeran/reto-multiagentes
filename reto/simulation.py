@@ -1,5 +1,5 @@
 import agentpy as ap
-from random import sample
+from random import *
 from collections import Counter
 from owlready2 import *
 
@@ -79,18 +79,33 @@ def runModel():
             # Change traffic lights colors depending on the most voted
             self.model.event['traffice_light_colors'] = ['red', 'red', 'red', 'red']
             self.model.new_event = True
-            for dir in DIR_TO_INDEX.keys():
-                if dir == votes[0]:
-                    self.lights[DIR_TO_INDEX[dir]].current_color[0].has_color = "green"
-                    self.model.event['traffice_light_colors'][DIR_TO_INDEX[dir]] = "green" # Used to later display simulation  in 3d
-                else:
-                    self.lights[DIR_TO_INDEX[dir]].current_color[0].has_color = "red"
+            
+            first_light_index = DIR_TO_INDEX[votes[0]]
+            # First choose the most voted traffic light to go green.
+            self.lights[first_light_index].current_color[0].has_color = "green"
+            self.model.event['traffice_light_colors'][first_light_index] = "green" # Used to later display simulation  in 3d
+            # Check if there is another voted option compatible with the most voted.
+            i = 1
+            while i < len(votes):
+                second_light_index = DIR_TO_INDEX[votes[i]]
+                if abs(second_light_index-first_light_index) == 2: # check if it is the opposite sideso it is compatible
+                    self.lights[second_light_index].current_color[0].has_color = "green"
+                    self.model.event['traffice_light_colors'][second_light_index] = "green" # Used to later display simulation  in 3d
+                    return
+                i += 1
 
     class VehicleAgent(ap.Agent):
         def setup(self):
-            directions = sample(DIR_TO_INDEX.keys(), 2)
-            new_direction = Direction(has_origin=directions[0],has_destination=directions[1])
+            # This includes left turn.
+            # directions = sample(DIR_TO_INDEX.keys(), 2) 
             
+            # Choose origin and destination excluding left turns
+            origin = choice(list(DIR_TO_CAR_STREET.keys()))
+            valid_destinations = {"S":["W","N"],"W":["N","E"],"N":["S","E"],"E":["S","W"]}
+            destination = choice(valid_destinations[origin])
+            
+            
+            new_direction = Direction(has_origin=origin,has_destination=destination)
             self.car = Car(current_direction=new_direction, has_crossed=False)
 
         def step(self):
@@ -115,7 +130,7 @@ def runModel():
             if self.last_car >= self.vehicle_rate:
                 self.event['cars_to_add'] = []
                 self.new_event = True
-                for _ in range(self.p.vehicles//3):
+                for _ in range(self.p.vehicles//2):
                     new_car = VehicleAgent(self)
                     self.vehicles.append(new_car)
                     self.event['cars_to_add'].append((DIR_TO_CAR_STREET[new_car.car.current_direction.has_origin], 
@@ -135,7 +150,6 @@ def runModel():
                 votes.append(vehicle.car.current_direction.has_origin)
 
             vote_counter = Counter(votes)
-
             return [i[0] for i in vote_counter.most_common(4)]
 
         def update(self):
@@ -145,15 +159,13 @@ def runModel():
             # 3D simulation
             if self.new_event:
                 self.record("events", self.event)
-                print('\n\n')
-                print(self.event)
                 self.new_event = False
                 self.event = {}
 
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 100, "vehicles": 10, "light_cooldown": 30, "vehicle_rate": 15}
+    parameters = {"steps": 150, "vehicles": 12, "light_cooldown": 30, "vehicle_rate": 15}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
