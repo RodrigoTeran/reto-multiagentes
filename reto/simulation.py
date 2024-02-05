@@ -99,9 +99,12 @@ def runModel():
             # This includes left turn.
             # directions = sample(DIR_TO_INDEX.keys(), 2) 
             
+            # Choose origin and destination excluding left turns
             origin = choice(list(DIR_TO_CAR_STREET.keys()))
             valid_destinations = {"S":["W","N"],"W":["N","E"],"N":["S","E"],"E":["S","W"]}
             destination = choice(valid_destinations[origin])
+            
+            
             new_direction = Direction(has_origin=origin,has_destination=destination)
             self.car = Car(current_direction=new_direction, has_crossed=False)
 
