@@ -91,6 +91,7 @@ def runModel():
                 if abs(second_light_index-first_light_index) == 2: # check if it is the opposite sideso it is compatible
                     self.lights[second_light_index].current_color[0].has_color = "green"
                     self.model.event['traffice_light_colors'][second_light_index] = "green" # Used to later display simulation  in 3d
+                    print(self.model.event['traffice_light_colors'])
                     return
                 i += 1
 
@@ -148,8 +149,9 @@ def runModel():
                 if vehicle.car.has_crossed:
                     continue
                 votes.append(vehicle.car.current_direction.has_origin)
-
             vote_counter = Counter(votes)
+            print(vote_counter)
+            print([i[0] for i in vote_counter.most_common(4)])
             return [i[0] for i in vote_counter.most_common(4)]
 
         def update(self):
@@ -165,7 +167,7 @@ def runModel():
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 150, "vehicles": 12, "light_cooldown": 30, "vehicle_rate": 15}
+    parameters = {"steps": 150, "vehicles": 10, "light_cooldown": 1, "vehicle_rate": 20}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")

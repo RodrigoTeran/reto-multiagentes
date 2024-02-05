@@ -219,7 +219,6 @@ def main(events):
             # Check if all cars that should have crossed have crossed.
             for car in cars:
                 trafic_light_index = STREET_TO_TRAFFIC_LIGHT[car.street]
-                print()
                 if not car.crossed and event_dict['traffice_light_colors'][trafic_light_index] == 'green':    
                     car.green_light()
                     is_rem_cars = True
