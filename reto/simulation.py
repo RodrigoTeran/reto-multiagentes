@@ -58,8 +58,6 @@ def runModel():
 
     class TrafficLightAgent(ap.Agent):
         def setup(self):
-            self.cooldown = self.model.p.light_cooldown
-            self.last_change = self.cooldown
             # Intantiate 4 ontology instances of class TrafficLight to
             # represent the 4 traffic lights in the simulation.
             # indexes: facing north, east, south, west
@@ -72,9 +70,7 @@ def runModel():
         def step(self):
             votes, lights_with_cars = self.model.getVotes()
             if not lights_with_cars:
-                self.last_change += 1
                 return
-            self.last_change = 0
 
             # Change traffic lights colors depending on the most voted
             self.model.event['traffice_light_colors'] = ['red', 'red', 'red', 'red']
@@ -95,7 +91,6 @@ def runModel():
                 self.lights[index].current_color[0].has_color = "green"
                 self.model.event['traffice_light_colors'][index] = "green" # Used to later display simulation  in 3d
             
-            print("Lights from agent: ", self.model.event['traffice_light_colors'])
 
     class VehicleAgent(ap.Agent):
         def setup(self):
@@ -158,7 +153,6 @@ def runModel():
                     
                 # used to know if there are cars in both directions to know if both lights should turn green.
                 lights_with_cars.add(vehicle.car.current_direction.has_origin)
-            print(votes, lights_with_cars)
             return votes, lights_with_cars
 
         def update(self):
@@ -167,7 +161,6 @@ def runModel():
             
             # 3D simulation
             if self.new_event:
-                print("Event from finally ", self.model.event)
                 self.record("events", self.event)
                 self.new_event = False
                 self.event = {}
@@ -175,12 +168,12 @@ def runModel():
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 150, "vehicles": 10, "light_cooldown": 1, "vehicle_rate": 20}
+    parameters = {"steps": 150, "vehicles": 10, "vehicle_rate": 20}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
     output = [event for event in model.log['events'] if event is not None]
-    #print('\n\n'.join(map(str, output)))
+    print('\n\n'.join(map(str, output)))
     return output
 
 if __name__ == '__main__':
