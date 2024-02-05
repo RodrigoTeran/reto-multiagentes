@@ -148,7 +148,6 @@ def runModel():
                 if vehicle.car.has_crossed:
                     continue
                 votes.append(vehicle.car.current_direction.has_origin)
-
             vote_counter = Counter(votes)
             return [i[0] for i in vote_counter.most_common(4)]
 
@@ -165,7 +164,7 @@ def runModel():
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 150, "vehicles": 12, "light_cooldown": 30, "vehicle_rate": 15}
+    parameters = {"steps": 150, "vehicles": 10, "light_cooldown": 1, "vehicle_rate": 20}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
