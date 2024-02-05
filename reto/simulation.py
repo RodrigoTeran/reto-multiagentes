@@ -91,7 +91,6 @@ def runModel():
                 if abs(second_light_index-first_light_index) == 2: # check if it is the opposite sideso it is compatible
                     self.lights[second_light_index].current_color[0].has_color = "green"
                     self.model.event['traffice_light_colors'][second_light_index] = "green" # Used to later display simulation  in 3d
-                    print(self.model.event['traffice_light_colors'])
                     return
                 i += 1
 
@@ -150,8 +149,6 @@ def runModel():
                     continue
                 votes.append(vehicle.car.current_direction.has_origin)
             vote_counter = Counter(votes)
-            print(vote_counter)
-            print([i[0] for i in vote_counter.most_common(4)])
             return [i[0] for i in vote_counter.most_common(4)]
 
         def update(self):
