@@ -58,8 +58,6 @@ def runModel():
 
     class TrafficLightAgent(ap.Agent):
         def setup(self):
-            self.cooldown = self.model.p.light_cooldown
-            self.last_change = self.cooldown
             # Intantiate 4 ontology instances of class TrafficLight to
             # represent the 4 traffic lights in the simulation.
             # indexes: facing north, east, south, west
@@ -70,29 +68,29 @@ def runModel():
                 
             
         def step(self):
-            votes = self.model.getVotes()
-            if self.last_change < self.cooldown or not votes:
-                self.last_change += 1
+            votes, lights_with_cars = self.model.getVotes()
+            if not lights_with_cars:
                 return
-            self.last_change = 0
 
             # Change traffic lights colors depending on the most voted
             self.model.event['traffice_light_colors'] = ['red', 'red', 'red', 'red']
             self.model.new_event = True
             
-            first_light_index = DIR_TO_INDEX[votes[0]]
-            # First choose the most voted traffic light to go green.
-            self.lights[first_light_index].current_color[0].has_color = "green"
-            self.model.event['traffice_light_colors'][first_light_index] = "green" # Used to later display simulation  in 3d
-            # Check if there is another voted option compatible with the most voted.
-            i = 1
-            while i < len(votes):
-                second_light_index = DIR_TO_INDEX[votes[i]]
-                if abs(second_light_index-first_light_index) == 2: # check if it is the opposite sideso it is compatible
-                    self.lights[second_light_index].current_color[0].has_color = "green"
-                    self.model.event['traffice_light_colors'][second_light_index] = "green" # Used to later display simulation  in 3d
-                    return
-                i += 1
+            # Which 2 lights should be considered.
+            if votes[0] > votes[1]:
+                potential_lights = ["N", "S"]
+            else:
+                potential_lights = ["E", "W"]
+            
+            for dir in potential_lights:
+                index = DIR_TO_INDEX[dir]
+                if dir not in lights_with_cars: #No car voted for this option.
+                    self.lights[index].current_color[0].has_color = "red"
+                    continue
+                # First choose the most voted traffic light to go green.
+                self.lights[index].current_color[0].has_color = "green"
+                self.model.event['traffice_light_colors'][index] = "green" # Used to later display simulation  in 3d
+            
 
     class VehicleAgent(ap.Agent):
         def setup(self):
@@ -118,13 +116,13 @@ def runModel():
     class CrossModel(ap.Model):
         def setup(self):
             self.trafficLight = TrafficLightAgent(self)
-            self.vehicles = ap.AgentList(self, self.p.vehicles, VehicleAgent)
+            self.vehicles = ap.AgentList(self, 0, VehicleAgent)
             self.vehicle_rate = self.p.vehicle_rate
             self.last_car = self.vehicle_rate
             # Used to store events in order to later run simulation in 3D
             self.event = {}
             self.new_event = False
-
+    
         def step(self):
             # Add more cars to simulation
             if self.last_car >= self.vehicle_rate:
@@ -143,13 +141,19 @@ def runModel():
             self.vehicles.step()
 
         def getVotes(self):
-            votes = []
+            votes = [0, 0] # N + S, E + W
+            lights_with_cars = set()
             for vehicle in self.vehicles:
                 if vehicle.car.has_crossed:
                     continue
-                votes.append(vehicle.car.current_direction.has_origin)
-            vote_counter = Counter(votes)
-            return [i[0] for i in vote_counter.most_common(4)]
+                if vehicle.car.current_direction.has_origin == "N" or vehicle.car.current_direction.has_origin == "S":
+                    votes[0] += 1
+                else:
+                    votes[1] += 1
+                    
+                # used to know if there are cars in both directions to know if both lights should turn green.
+                lights_with_cars.add(vehicle.car.current_direction.has_origin)
+            return votes, lights_with_cars
 
         def update(self):
             self.record("vehicles", len(self.vehicles))
@@ -164,7 +168,7 @@ def runModel():
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 150, "vehicles": 10, "light_cooldown": 1, "vehicle_rate": 20}
+    parameters = {"steps": 150, "vehicles": 10, "vehicle_rate": 20}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
