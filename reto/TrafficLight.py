@@ -16,7 +16,6 @@ class TrafficLight:
             "green": (0.0, 1.0, 0.0),
             "blue": (0.0, 0.0, 0.5)
         }
-        self.current_color = "red" # Which color is currently on.
         length = 3
         width = 1
         height = 0.75
@@ -92,7 +91,7 @@ class TrafficLight:
                 glVertex3f(x, y, z1)
             glEnd()
         
-    def draw(self):
+    def draw(self, on_color):
         glPushMatrix()
         glTranslatef(self.pos[0] ,
                      self.pos[1] ,
@@ -107,7 +106,7 @@ class TrafficLight:
         
         # Draw lights
         for color, position in zip(self.colors.keys(), [(-1.3, 0.15, 0.5), (-0.5, 0.15, 0.5), (0.3, 0.15, 0.5), (1.1, 0.15, 0.5)]):
-            if color == self.current_color:
+            if color == on_color:
                 intensity = 2.0  # Brighter if the current color
             else:
                 intensity = 0.30  # Dimmer for other colors
