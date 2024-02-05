@@ -15,6 +15,7 @@ class Car:
     def __init__(self, street: int, destination: int, texture_car, texture_glass):
         self.texture_car = texture_car
         self.texture_glass = texture_glass
+        self.crossed = False
         self.points = [
             [-0.5, 0, 0.5],
             [-0.5, 0.5, 0.5],
@@ -126,16 +127,16 @@ class Car:
 
         if street == 1:
             starting_position = [-1.5, 0, -17.5]
-            target_position_to_wait = [-1.5, 0, -7]
+            target_position_to_wait = [-1.5, 0, -8]
         elif street == 2:
             starting_position = [-17.5, 0, 1.5]
-            target_position_to_wait = [-7, 0, 1.5]
+            target_position_to_wait = [-8, 0, 1.5]
         elif street == 3:
             starting_position = [1.5, 0, 17.5]
-            target_position_to_wait = [1.5, 0, 7]
+            target_position_to_wait = [1.5, 0, 8]
         elif street == 4:
             starting_position = [17.5, 0, -1.5]
-            target_position_to_wait = [7, 0, -1.5]
+            target_position_to_wait = [8, 0, -1.5]
 
         tolerance_left_turn = 1.1
 
@@ -380,6 +381,7 @@ class Car:
             self.go_to_point(self.target_position_to_leave)
         elif self.step == 3:
             # volver al inicio
+            self.crossed = True
             self.step = 0
             self.place_car(self.street, self.destination)
 
@@ -403,9 +405,9 @@ class Car:
             else:
                 # ya ha llegado a ese destino
                 if self.is_waiting_for_light and self.step == 0: return
-
+                
                 if self.intent == "left" and self.step == 1:
                     self.step = 1.5
                 else:
-                    self.step = math.floor(self.step + 1)
+                    self.step = math.floor(self.step + 1)            
         pass
