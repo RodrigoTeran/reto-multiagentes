@@ -108,8 +108,8 @@ def runModel():
 
         def step(self):
             corresponding_light_index = DIR_TO_INDEX[self.car.current_direction.has_origin]
-            if (not self.car.has_crossed and 
-                self.model.trafficLight.lights[corresponding_light_index].current_color[0].has_color == "green"):
+            if (not self.car.has_crossed and self.model.event and 
+                self.model.event['traffice_light_colors'][corresponding_light_index]  == "green"):
                 self.car.has_crossed = True
 
 
@@ -118,24 +118,25 @@ def runModel():
             self.trafficLight = TrafficLightAgent(self)
             self.vehicles = ap.AgentList(self, 0, VehicleAgent)
             self.vehicle_rate = self.p.vehicle_rate
-            self.last_car = self.vehicle_rate
+            self.new_cars_cooldown = self.vehicle_rate
             # Used to store events in order to later run simulation in 3D
             self.event = {}
             self.new_event = False
     
         def step(self):
             # Add more cars to simulation
-            if self.last_car >= self.vehicle_rate:
+            if self.new_cars_cooldown >= self.vehicle_rate:
                 self.event['cars_to_add'] = []
                 self.new_event = True
-                for _ in range(self.p.vehicles//2):
+                for _ in range(randint(3, self.p.vehicles)): # Amount of new cars is random
                     new_car = VehicleAgent(self)
                     self.vehicles.append(new_car)
                     self.event['cars_to_add'].append((DIR_TO_CAR_STREET[new_car.car.current_direction.has_origin], 
                                                       DIR_TO_CAR_STREET[new_car.car.current_direction.has_destination]))
-                self.last_car = 0
+                # Make car cooldown random
+                self.new_cars_cooldown = randint(0, self.vehicle_rate)
             else:
-                self.last_car += 1
+                self.new_cars_cooldown += 1
 
             self.trafficLight.step()
             self.vehicles.step()
@@ -168,7 +169,7 @@ def runModel():
         def end(self):
             print("Finished Simultion!")
 
-    parameters = {"steps": 150, "vehicles": 10, "vehicle_rate": 20}
+    parameters = {"steps": 150, "vehicles": 12, "vehicle_rate": 5}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
