@@ -3,7 +3,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import math
-import random
 
 
 class TrafficLight:
@@ -14,22 +13,22 @@ class TrafficLight:
             "red": (1.0, 0.0, 0.0),
             "yellow": (1.0, 1.0, 0.0),
             "green": (0.0, 1.0, 0.0),
-            "blue": (0.0, 0.0, 0.5)
+            "blue": (0.0, 0.0, 0.5),
         }
         length = 3
         width = 1
         height = 0.75
         self.points = [
-            [-length/2, -width/2, height/2],  # bottom-left-front
-            [-length/2, width/2, height/2],   # top-left-front
-            [length/2, width/2, height/2],    # top-right-front
-            [length/2, -width/2, height/2],   # bottom-right-front
-            [-length/2, -width/2, -height/2],  # bottom-left-back
-            [-length/2, width/2, -height/2],   # top-left-back
-            [length/2, width/2, -height/2],    # top-right-back
-            [length/2, -width/2, -height/2],   # bottom-right-back
+            [-length / 2, -width / 2, height / 2],  # bottom-left-front
+            [-length / 2, width / 2, height / 2],  # top-left-front
+            [length / 2, width / 2, height / 2],  # top-right-front
+            [length / 2, -width / 2, height / 2],  # bottom-right-front
+            [-length / 2, -width / 2, -height / 2],  # bottom-left-back
+            [-length / 2, width / 2, -height / 2],  # top-left-back
+            [length / 2, width / 2, -height / 2],  # top-right-back
+            [length / 2, -width / 2, -height / 2],  # bottom-right-back
         ]
-    
+
     def drawFaces(self):
         glBegin(GL_QUADS)
         glVertex3fv(self.points[0])
@@ -67,7 +66,7 @@ class TrafficLight:
         glVertex3fv(self.points[4])
         glVertex3fv(self.points[7])
         glEnd()
-    
+
     def draw_sphere(self, radius, slices, stacks):
         for i in range(stacks):
             lat0 = math.pi * (-0.5 + (i / stacks))
@@ -86,33 +85,36 @@ class TrafficLight:
 
                 glNormal3f(x / radius, y / radius, z0 / radius)
                 glVertex3f(x, y, z0)
-                
+
                 glNormal3f(x / radius, y / radius, z1 / radius)
                 glVertex3f(x, y, z1)
             glEnd()
-        
+
     def draw(self, on_color):
         glPushMatrix()
-        glTranslatef(self.pos[0] ,
-                     self.pos[1] ,
-                     self.pos[2] )
+        glTranslatef(self.pos[0], self.pos[1], self.pos[2])
         glRotatef(*self.rotation)
         glRotatef(-90, 1, 0, 0)
-        
+
         # Draw cuboid
         glColor3f(1.0, 1.0, 1.0)
         self.drawFaces()
-   
-        
-        
+
         # Draw lights
-        for color, position in zip(self.colors.keys(), [(-1.3, 0.15, 0.5), (-0.5, 0.15, 0.5), (0.3, 0.15, 0.5), (1.1, 0.15, 0.5)]):
+        for color, position in zip(
+            self.colors.keys(),
+            [(-1.3, 0.15, 0.5), (-0.5, 0.15, 0.5), (0.3, 0.15, 0.5), (1.1, 0.15, 0.5)],
+        ):
             if color == on_color:
                 intensity = 2.0  # Brighter if the current color
             else:
                 intensity = 0.30  # Dimmer for other colors
 
-            glColor3f(self.colors[color][0] * intensity, self.colors[color][1] * intensity, self.colors[color][2] * intensity)
+            glColor3f(
+                self.colors[color][0] * intensity,
+                self.colors[color][1] * intensity,
+                self.colors[color][2] * intensity,
+            )
             glPushMatrix()
             glTranslated(*position)
             self.draw_sphere(0.2, 50, 50)

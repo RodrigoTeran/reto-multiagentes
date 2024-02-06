@@ -9,6 +9,7 @@ from random import random
 
 TOLERANCE = 1
 
+
 class Car:
     cars: list["Car"] = []
 
@@ -36,13 +37,13 @@ class Car:
             [0.5, 0.6, 0.35],
             [0.25, 0.6, 0.35],
             [0.25, 0.6, 0.5],
-            [0.5, 0.6, 0.5]
+            [0.5, 0.6, 0.5],
         ]
         self.right_directional = [
             [-0.5, 0.6, 0.35],
             [-0.25, 0.6, 0.35],
             [-0.25, 0.6, 0.5],
-            [-0.5, 0.6, 0.5]
+            [-0.5, 0.6, 0.5],
         ]
         self.windows = [
             [  # Ventana delantera
@@ -107,8 +108,8 @@ class Car:
                 [-0.5, 0.5, 0.1 - 1.2],
                 [-0.5, 0.5, -0.1 - 1.2],
                 [-0.5, 1.0, -0.45 - 0.5],
-                [-0.5, 1.0, -0.25 - 0.5]
-            ]
+                [-0.5, 1.0, -0.25 - 0.5],
+            ],
         ]
 
         self.place_car(street, destination)
@@ -120,7 +121,7 @@ class Car:
         Car.cars.append(self)
         self.id = random()
         self.is_waiting_for_light = False
-    
+
     def place_car(self, street, destination):
         if street == destination:
             raise Exception("Están prohibidas las vueltas en U... :(")
@@ -143,19 +144,35 @@ class Car:
         if destination == 1:
             target_position_to_turn = [1.5, 0, -7]
             target_position_to_leave = [1.5, 0, -17.5]
-            self.mid_target_position_to_turn = [-tolerance_left_turn, 0, -tolerance_left_turn]
+            self.mid_target_position_to_turn = [
+                -tolerance_left_turn,
+                0,
+                -tolerance_left_turn,
+            ]
         elif destination == 2:
             target_position_to_turn = [-7, 0, -1.5]
             target_position_to_leave = [-17.5, 0, -1.5]
-            self.mid_target_position_to_turn = [-tolerance_left_turn, 0, tolerance_left_turn]
+            self.mid_target_position_to_turn = [
+                -tolerance_left_turn,
+                0,
+                tolerance_left_turn,
+            ]
         elif destination == 3:
             target_position_to_turn = [-1.5, 0, 7]
             target_position_to_leave = [-1.5, 0, 17.5]
-            self.mid_target_position_to_turn = [tolerance_left_turn, 0, tolerance_left_turn]
+            self.mid_target_position_to_turn = [
+                tolerance_left_turn,
+                0,
+                tolerance_left_turn,
+            ]
         elif destination == 4:
             target_position_to_turn = [7, 0, 1.5]
             target_position_to_leave = [17.5, 0, 1.5]
-            self.mid_target_position_to_turn = [tolerance_left_turn, 0, -tolerance_left_turn]
+            self.mid_target_position_to_turn = [
+                tolerance_left_turn,
+                0,
+                -tolerance_left_turn,
+            ]
 
         self.street = street
         self.destination = destination
@@ -172,7 +189,7 @@ class Car:
             self.intent = "left"
 
         self.position = np.array(starting_position, float)
-        self.target_position = np.array(starting_position, float) # Current
+        self.target_position = np.array(starting_position, float)  # Current
         self.target_position_to_wait = target_position_to_wait
         self.target_position_to_turn = target_position_to_turn
         self.target_position_to_leave = target_position_to_leave
@@ -182,7 +199,7 @@ class Car:
         self.dir_target = self.dir_vector.copy()
 
         self.moving_to_target = False
-        self.step = 0 # 0 -> moverse a la linea, 1 -> dar vuelta, 2 -> irse
+        self.step = 0  # 0 -> moverse a la linea, 1 -> dar vuelta, 2 -> irse
 
     def vector_angle(self, vu, vv):  # calcula el +/-angulo entre 2 vectores
         vvx = vv[2]
@@ -190,13 +207,14 @@ class Car:
         vux = vu[2]
         vuy = vu[0]
         return np.degrees(np.arctan2(vvy, vvx) - np.arctan2(vuy, vux))
-    
-    def rotate_dir_vector(self):  # rota progresivamente el vector de dir hasta alcanzar la dir objetivo
+
+    def rotate_dir_vector(self):
+        """rota progresivamente el vector de dir hasta alcanzar la dir objetivo"""
         if not np.array_equal(self.dir_vector, self.dir_target):
             dif = self.vector_angle(self.dir_vector, self.dir_target)
-            if (
-                abs(dif) < 2
-            ):  # si el abs del angulo de dif es menor a 2(la rotacion por iteracion) se termina de rotar igualando la dir al target
+
+            # si el abs del angulo de dif es menor a 2(la rotacion por iteracion) se termina de rotar igualando la dir al target
+            if abs(dif) < 2:
                 self.dir_vector = self.dir_target
             elif dif < 0:
                 degree = np.radians(2)
@@ -223,17 +241,21 @@ class Car:
     def detCol(self):
 
         for car in Car.cars:
-            if car.id == self.id: continue
+            if car.id == self.id:
+                continue
 
             # Calcula la distancia entre el lift y el box
-            dist = math.sqrt((car.position[0] - self.position[0])**2 + (car.position[2] - self.position[2])**2)
+            dist = math.sqrt(
+                (car.position[0] - self.position[0]) ** 2
+                + (car.position[2] - self.position[2]) ** 2
+            )
 
             sum_radios = car.radio + self.radio
 
             if dist <= sum_radios:
                 return car
-        
-        return None    
+
+        return None
 
     def draw_cuboid(self, points: list[list[float]]):
         squares = [
@@ -248,14 +270,12 @@ class Car:
         for square in squares:
             for i in square:
                 glVertex3fv(points[i])
-    
+
     def render(self):
         glPushMatrix()
         glTranslate(*self.position)
 
-        glRotate(
-            self.vector_angle([0, 0, 1], self.dir_vector), 0, 1, 0
-        )
+        glRotate(self.vector_angle([0, 0, 1], self.dir_vector), 0, 1, 0)
 
         # Activar y enlazar la textura
         glPushMatrix()
@@ -265,12 +285,11 @@ class Car:
         if self.street == 1:
             colorBody = [1.0, 0.0, 0.0]
         elif self.street == 2:
-            colorBody = [227.0/255, 45.0/255, 243.0/255]
+            colorBody = [227.0 / 255, 45.0 / 255, 243.0 / 255]
         elif self.street == 3:
-            colorBody = [222.0/255, 145.0/255, 54.0/255]
+            colorBody = [222.0 / 255, 145.0 / 255, 54.0 / 255]
         elif self.street == 4:
-            colorBody = [171.0/255, 230.0/255, 250.0/255]
-        
+            colorBody = [171.0 / 255, 230.0 / 255, 250.0 / 255]
 
         glColor3f(*colorBody)
         glBegin(GL_QUADS)
@@ -296,7 +315,7 @@ class Car:
                 glVertex3fv(point)
         glEnd()
 
-        # Render directionals        
+        # Render directionals
         off = [0.0, 1.0, 1.0]
         on = [1.0, 1.0, 0.0]
 
@@ -330,10 +349,11 @@ class Car:
 
         glPopMatrix()
 
-        self.directionals_ticks = (self.directionals_ticks + 1) % self.max_directionals_ticks
+        self.directionals_ticks = (
+            self.directionals_ticks + 1
+        ) % self.max_directionals_ticks
 
         self.update()
-
 
     def stop_cars_in_same_lane(self, car: "Car"):
         if self.street == 1:
@@ -341,28 +361,28 @@ class Car:
             if car.position[2] <= self.position[2]:
                 return car
             return self
-        
+
         elif self.street == 2:
             # la x debe ser mayor
             if car.position[0] <= self.position[0]:
                 return car
             return self
-        
+
         elif self.street == 3:
             # la z debe ser menor
             if car.position[2] >= self.position[2]:
                 return car
             return self
-        
+
         elif self.street == 4:
             # la x debe ser menor
             if car.position[0] >= self.position[0]:
                 return car
             return self
-        
+
     def green_light(self):
         self.is_waiting_for_light = False
-    
+
     def red_light(self):
         self.is_waiting_for_light = True
 
@@ -372,7 +392,7 @@ class Car:
         elif self.step == 1 or self.step == 1.5:
             if self.intent == "left":
                 if self.step == 1:
-                    self.go_to_point(self.mid_target_position_to_turn) # go to center
+                    self.go_to_point(self.mid_target_position_to_turn)  # go to center
                 else:
                     self.go_to_point(self.target_position_to_turn)
             else:
@@ -392,22 +412,23 @@ class Car:
                 self.moving_to_target = False
                 car.moving_to_target = False
                 return
-            
+
             # same street
             # quitar movimiento solo al que va más atrás
             annoying_car = self.stop_cars_in_same_lane(car)
             annoying_car.moving_to_target = False
-        
+
         if self.moving_to_target:
             diff = np.linalg.norm(self.target_position - self.position)
             if diff > TOLERANCE:
                 self.position += np.array(self.dir_vector, float) * self.speed
             else:
                 # ya ha llegado a ese destino
-                if self.is_waiting_for_light and self.step == 0: return
-                
+                if self.is_waiting_for_light and self.step == 0:
+                    return
+
                 if self.intent == "left" and self.step == 1:
                     self.step = 1.5
                 else:
-                    self.step = math.floor(self.step + 1)            
+                    self.step = math.floor(self.step + 1)
         pass
