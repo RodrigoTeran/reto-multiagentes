@@ -97,6 +97,7 @@ class TrafficLight:
                      self.pos[1] ,
                      self.pos[2] )
         glRotatef(*self.rotation)
+        glRotatef(-90, 1, 0, 0)
         
         # Draw cuboid
         glColor3f(1.0, 1.0, 1.0)
