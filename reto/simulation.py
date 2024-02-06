@@ -167,9 +167,9 @@ def runModel():
                 self.event = {}
 
         def end(self):
-            print("Finished Simultion!")
+            print("Finished Simulation!")
 
-    parameters = {"steps": 150, "vehicles": 12, "vehicle_rate": 5}
+    parameters = {"steps": 50, "vehicles": 10, "vehicle_rate": 0}
     model = CrossModel(parameters)
     model.run()
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
