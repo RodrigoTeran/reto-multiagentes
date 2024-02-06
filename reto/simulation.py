@@ -2,6 +2,8 @@ import agentpy as ap
 from random import *
 from collections import Counter
 from owlready2 import *
+import matplotlib.pyplot as plt
+import numpy as np
 
 def runModel():
     # Ontology using Owlready2
@@ -188,8 +190,12 @@ def runModel():
         #getVotes() end $$$$$$$$$$$$$$$
 
         def update(self):
-            self.record("vehicles", len(self.vehicles))
-            self.record("crossed", len([i for i in self.vehicles if i.car.has_crossed]))
+            total_vehicles = len(self.vehicles)
+            crossed = len([i for i in self.vehicles if i.car.has_crossed])
+            self.record("vehicles", total_vehicles)
+            self.record("crossed", crossed)
+            if total_vehicles:
+                self.record("utility", round(crossed/total_vehicles, 2))
             
             # 3D simulation
             if self.new_event:
@@ -209,9 +215,24 @@ def runModel():
     
     model = CrossModel(parameters)
     model.run()
+    
+    #Extract data from the Model records (the utility):
+    utility = model.log['utility']
+    time = np.arange(0, len(utility), 1)
+
+    # Plot the data
+    plt.plot(time, utility, marker='o', linestyle='-')
+
+    # Add labels and title
+    plt.xlabel('Time (steps)')
+    plt.title('Utility (Total Vehicules/Crossed)')
+
+    # Show the plot
+    plt.show()    
+    
     print(f"Vehicles = {model.log['crossed'][-1]}/{model.log['vehicles'][-1]}")
     output = [event for event in model.log['events'] if event is not None]
-    print('\n\n'.join(map(str, output)))
+    #print('\n\n'.join(map(str, output)))
     return output
 
 if __name__ == '__main__':
