@@ -1,13 +1,11 @@
 import pygame
-import math
 from pygame.locals import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from random import randint
-from Utils import Axis, plane, horizons, solid_plane
+from Utils import plane, horizons, solid_plane
 
 import sys
 
@@ -77,7 +75,7 @@ def Texturas(filepath):
     glDisable(GL_TEXTURE_2D)
 
 
-traffic_lights = [] # facing north, east, south, west
+traffic_lights = []  # facing north, east, south, west
 cars = []
 positions = [[0, 5, -10], [-10, 5, 0], [0, 5, 10], [10, 5, 0]]
 rotations = [[0, 0, 0, 0], [90, 0, 1, 0], [180, 0, 1, 0], [-90, 0, 1, 0]]
@@ -86,32 +84,28 @@ for i in range(4):
     traffic_lights.append(TrafficLight(positions[i], rotations[i]))
 
 
-def add_cars(cars_to_add): # cars_to_add: [(from, to), (from, to)]
+def add_cars(cars_to_add):  # cars_to_add: [(from, to), (from, to)]
     for new_car in cars_to_add:
         cars.append(Car(new_car[0], new_car[1], textures[2], textures[3]))
 
-"""
-Example of how events look like:
-events = [
-    # Event 1
-    {
-        'cars_to_add': [(4, 2), (1, 2), (1, 3), (1, 4), (4, 3), (3, 2), (3, 2), (3, 2), (4, 2), (4, 2), (4, 2)],
-        'traffice_light_colors': ['green', 'red', 'red', 'red'] # Each index represents a traffic light
-    },
-    # Event 2
-    {
-        'traffice_light_colors': ['red', 'green', 'red', 'red']
-    },
-]
-"""
+
+# Example of how events look like:
+# events = [
+#     # Event 1
+#     {
+#         'cars_to_add': [(4, 2), (1, 2), (1, 3), (1, 4), (4, 3), (3, 2), (3, 2), (3, 2), (4, 2), (4, 2), (4, 2)],
+#         'traffice_light_colors': ['green', 'red', 'red', 'red'] # Each index represents a traffic light
+#     },
+#     # Event 2
+#     {
+#         'traffice_light_colors': ['red', 'green', 'red', 'red']
+#     },
+# ]
 
 # Which traffic light is in front of which street
-STREET_TO_TRAFFIC_LIGHT = {
-    1:2,
-    2:3,
-    3:0,
-    4:1
-}
+STREET_TO_TRAFFIC_LIGHT = {1: 2, 2: 3, 3: 0, 4: 1}
+
+
 def main(events):
     Init()
     Texturas("reto/assets/Suelo.bmp")
@@ -119,7 +113,6 @@ def main(events):
     Texturas("reto/assets/carMetalic.bmp")
     Texturas("reto/assets/glass.bmp")
     Texturas("reto/assets/concrete.bmp")
-
 
     building = OBJ("reto/assets/Apartment_Building_01_obj.obj")
     building2 = OBJ("reto/assets/building.obj")
@@ -133,10 +126,10 @@ def main(events):
     # Execute events from simultion
     for event_dict in events:
         # Check if new cars are added in event
-        if 'cars_to_add' in event_dict: 
-            add_cars(event_dict['cars_to_add'])
+        if "cars_to_add" in event_dict:
+            add_cars(event_dict["cars_to_add"])
 
-        if 'traffice_light_colors' not in event_dict:
+        if "traffice_light_colors" not in event_dict:
             continue
         event_done = False
         while not event_done:
@@ -148,10 +141,9 @@ def main(events):
                         match event.key:
                             case pygame.K_ESCAPE:
                                 event_done = True
-                            
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-            # Axis()
             plane(PLANE_WIDTH, PLANE_LENGTH, 0, [1, 1, 1], textures[0])
             horizons(
                 PLANE_WIDTH,
@@ -210,21 +202,25 @@ def main(events):
                     178 / 255,
                 ],
             )
-            
+
             # Draw traffic lights with there color
             for i in range(4):
-                traffic_lights[i].draw(event_dict['traffice_light_colors'][i])
-            
+                traffic_lights[i].draw(event_dict["traffice_light_colors"][i])
+
             is_rem_cars = False
             # Check if all cars that should have crossed have crossed.
             for car in cars:
                 trafic_light_index = STREET_TO_TRAFFIC_LIGHT[car.street]
-                if not car.crossed and event_dict['traffice_light_colors'][trafic_light_index] == 'green':    
+                if (
+                    not car.crossed
+                    and event_dict["traffice_light_colors"][trafic_light_index]
+                    == "green"
+                ):
                     car.green_light()
                     is_rem_cars = True
                 else:
                     car.red_light()
-                
+
                 if not car.crossed:
                     car.render()
 
