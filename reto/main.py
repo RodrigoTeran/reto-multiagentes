@@ -137,6 +137,7 @@ def main(events):
                 match event.type:
                     case pygame.QUIT:
                         event_done = True
+                        pygame.quit()
                     case pygame.KEYDOWN:
                         match event.key:
                             case pygame.K_ESCAPE:
