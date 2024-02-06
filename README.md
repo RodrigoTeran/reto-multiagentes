@@ -10,7 +10,11 @@ Para poder correr este proyecto se necesita al menos `python 3.10`. Puedes desca
 pip install -r requirements.txt
 ```
 
-Después, para poder correr la simulación basta con ejecutar el script `reto/main.py` con python para que comience la simulación.
+Después, para poder correr la simulación basta con ejecutar el siguiente comando:
+
+```console
+python reto/main.py
+```
 
 ## Configuración de la simulación
 
